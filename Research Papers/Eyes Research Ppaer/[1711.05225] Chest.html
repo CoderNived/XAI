@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<!-- saved from url=(0044)https://ar5iv.labs.arxiv.org/html/1711.05225 -->
+<html lang="en" data-theme="dark"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>[1711.05225] Chest</title><meta property="og:description" content="We develop an algorithm that can detect pneumonia from chest X-rays at a level exceeding practicing radiologists. Our algorithm, CheXNet, is a 121-layer convolutional neural network trained on ChestX-ray14, currently t…">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chest">
+<meta name="twitter:image:src" content="https://ar5iv.labs.arxiv.org/assets/ar5iv_card.png">
+<meta name="twitter:image:alt" content="ar5iv logo">
+<meta property="og:title" content="Chest">
+<meta property="og:site_name" content="ar5iv">
+<meta property="og:image" content="https://ar5iv.labs.arxiv.org/assets/ar5iv_card.png">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://ar5iv.labs.arxiv.org/html/1711.05225">
+<link rel="canonical" target="_blank" href="https://ar5iv.labs.arxiv.org/html/1711.05225">
+
+<!--Generated on Fri Mar 15 05:56:01 2024 by LaTeXML (version 0.8.8) http://dlmf.nist.gov/LaTeXML/.-->
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="keywords" lang="en" content="healthcare,  medical imaging,  convolutional neural networks,  xrays,  pneumonia">
+
+<script>
+  function detectColorScheme(){
+    var theme="light";
+    var current_theme = localStorage.getItem("ar5iv_theme");
+    if(current_theme){
+      if(current_theme == "dark"){
+        theme = "dark";
+      } }
+    else if(!window.matchMedia) { return false; }
+    else if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      theme = "dark"; }
+    if (theme=="dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.setAttribute("data-theme", "light"); } }
+
+  detectColorScheme();
+
+  function toggleColorScheme(){
+    var current_theme = localStorage.getItem("ar5iv_theme");
+    if (current_theme) {
+      if (current_theme == "light") {
+        localStorage.setItem("ar5iv_theme", "dark"); }
+      else {
+        localStorage.setItem("ar5iv_theme", "light"); } }
+    else {
+        localStorage.setItem("ar5iv_theme", "dark"); }
+    detectColorScheme(); }
+</script>
+<link media="all" rel="stylesheet" href="./[1711.05225] Chest_files/ar5iv-fonts.0.8.4.css"><link media="all" rel="stylesheet" href="./[1711.05225] Chest_files/ar5iv.0.8.4.css"><link media="all" rel="stylesheet" href="./[1711.05225] Chest_files/ar5iv-site.0.2.2.css">
+</head>
+<body>
+<div class="ltx_page_main">
+<div class="ltx_page_content">
+<article class="ltx_document ltx_pruned_first">
+<h1 class="ltx_title ltx_title_document">Chest</h1>
+<div class="ltx_authors">
+<span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Pranav Rajpurkar
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Jeremy Irvin
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Kaylie Zhu
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Brandon Yang
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Hershel Mehta
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Tony Duan
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Daisy Ding
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Aarti Bagul
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Robyn L. Ball
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Curtis Langlotz
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Katie Shpanskaya
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Matthew P. Lungren
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Andrew Y. Ng
+</span></span>
+</div>
+
+<h1 class="ltx_title ltx_title_document">CheXNet: Radiologist-Level Pneumonia Detection on Chest X-Rays with Deep Learning</h1>
+<div class="ltx_authors">
+<span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Pranav Rajpurkar
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Jeremy Irvin
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Kaylie Zhu
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Brandon Yang
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Hershel Mehta
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Tony Duan
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Daisy Ding
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Aarti Bagul
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Robyn L. Ball
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Curtis Langlotz
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Katie Shpanskaya
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Matthew P. Lungren
+</span></span>
+<span class="ltx_author_before">  </span><span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Andrew Y. Ng
+</span></span>
+</div>
+
+<div class="ltx_abstract">
+<h6 class="ltx_title ltx_title_abstract">Abstract</h6>
+<p id="id1.id1" class="ltx_p">We develop an algorithm that can detect pneumonia from chest X-rays at a level exceeding practicing radiologists. Our algorithm, CheXNet, is a 121-layer convolutional neural network trained on ChestX-ray14, currently the largest publicly available chest X-ray dataset, containing over 100,000 frontal-view X-ray images with 14 diseases. Four practicing academic radiologists annotate a test set, on which we compare the performance of CheXNet to that of radiologists. We find that CheXNet exceeds average radiologist performance on the F1 metric. We extend CheXNet to detect all 14 diseases in ChestX-ray14 and achieve state of the art results on all 14 diseases.</p>
+</div>
+<div class="ltx_keywords">healthcare, medical imaging, convolutional neural networks, xrays, pneumonia
+</div>
+<figure id="S0.F1" class="ltx_figure"><img src="./[1711.05225] Chest_files/x1.png" id="S0.F1.g1" class="ltx_graphics ltx_centering ltx_img_portrait" width="150" height="332" alt="Refer to caption">
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_figure"><span id="S0.F1.2.1.1" class="ltx_text" style="font-size:90%;">Figure 1</span>: </span><span id="S0.F1.3.2" class="ltx_text" style="font-size:90%;">
+CheXNet is a 121-layer convolutional neural network that takes a chest X-ray image as input, and outputs the probability of a pathology. On this example, CheXnet correctly detects pneumonia and also localizes areas in the image most indicative of the pathology.
+</span></figcaption>
+</figure><span id="footnote1" class="ltx_note ltx_role_footnote"><sup class="ltx_note_mark">†</sup><span class="ltx_note_outer"><span class="ltx_note_content"><sup class="ltx_note_mark">†</sup>Project website at <a target="_blank" href="https://stanfordmlgroup.github.io/projects/chexnet" title="" class="ltx_ref ltx_url ltx_font_typewriter">https://stanfordmlgroup.github.io/projects/chexnet</a></span></span></span>
+<section id="S1" class="ltx_section">
+<h2 class="ltx_title ltx_title_section">
+<span class="ltx_tag ltx_tag_section">1 </span>Introduction</h2>
+
+<div id="S1.p1" class="ltx_para">
+<p id="S1.p1.1" class="ltx_p">More than 1 million adults are hospitalized with pneumonia and around 50,000 die from the disease every year in the US alone <cite class="ltx_cite ltx_citemacro_citep">(CDC, <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib3" title="" class="ltx_ref">2017</a>)</cite>. Chest X-rays are currently the best available method for diagnosing pneumonia <cite class="ltx_cite ltx_citemacro_citep">(WHO, <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib27" title="" class="ltx_ref">2001</a>)</cite>, playing a crucial role in clinical care <cite class="ltx_cite ltx_citemacro_citep">(Franquet, <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib9" title="" class="ltx_ref">2001</a>)</cite> and epidemiological studies <cite class="ltx_cite ltx_citemacro_citep">(Cherian et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib4" title="" class="ltx_ref">2005</a>)</cite>. However, detecting pneumonia in chest X-rays is a challenging task that relies on the availability of expert radiologists. In this work, we present a model that can automatically detect pneumonia from chest X-rays at a level exceeding practicing radiologists.</p>
+</div>
+<div id="S1.p2" class="ltx_para">
+<p id="S1.p2.1" class="ltx_p">Our model, ChexNet (shown in Figure <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#S0.F1" title="Figure 1 ‣ Chest" class="ltx_ref"><span class="ltx_text ltx_ref_tag">1</span></a>), is a 121-layer convolutional neural network that inputs a chest X-ray image and outputs the probability of pneumonia along with a heatmap localizing the areas of the image most indicative of pneumonia. We train CheXNet on the recently released ChestX-ray14 dataset <cite class="ltx_cite ltx_citemacro_citep">(Wang et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib26" title="" class="ltx_ref">2017</a>)</cite>, which contains 112,120 frontal-view chest X-ray images individually labeled with up to 14 different thoracic diseases, including pneumonia. We use dense connections <cite class="ltx_cite ltx_citemacro_citep">(Huang et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib14" title="" class="ltx_ref">2016</a>)</cite> and batch normalization <cite class="ltx_cite ltx_citemacro_citep">(Ioffe &amp; Szegedy, <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib16" title="" class="ltx_ref">2015</a>)</cite> to make the optimization of such a deep network tractable.</p>
+</div>
+<div id="S1.p3" class="ltx_para">
+<p id="S1.p3.1" class="ltx_p">Detecting pneumonia in chest radiography can be difficult for radiologists. The appearance of pneumonia in X-ray images is often vague, can overlap with other diagnoses, and can mimic many other benign abnormalities. These discrepancies cause considerable variability among radiologists in the diagnosis of pneumonia <cite class="ltx_cite ltx_citemacro_citep">(Neuman et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib22" title="" class="ltx_ref">2012</a>; Davies et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib5" title="" class="ltx_ref">1996</a>; Hopstaken et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib13" title="" class="ltx_ref">2004</a>)</cite>. To estimate radiologist performance, we collect annotations from four practicing academic radiologists on a subset of 420 images from ChestX-ray14. On these 420 images, we measure performance of individual radiologists and the model.</p>
+</div>
+<div id="S1.p4" class="ltx_para">
+<p id="S1.p4.1" class="ltx_p">We find that the model exceeds the average radiologist performance on the pneumonia detection task. To compare CheXNet against previous work using ChestX-ray14, we make simple modifications to CheXNet to detect all 14 diseases in ChestX-ray14, and find that we outperform best published results on all 14 diseases. Automated detection of diseases from chest X-rays at the level of expert radiologists would not only have tremendous benefit in clinical settings, it would also be invaluable in delivery of health care to populations with inadequate access to diagnostic imaging specialists.</p>
+</div>
+<figure id="S1.T1" class="ltx_table">
+<table id="S1.T1.2" class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr id="S1.T1.2.1.1" class="ltx_tr">
+<th id="S1.T1.2.1.1.1" class="ltx_td ltx_align_top ltx_th ltx_th_row ltx_border_tt"></th>
+<th id="S1.T1.2.1.1.2" class="ltx_td ltx_align_right ltx_th ltx_th_column ltx_border_tt">F1 Score (95% CI)</th>
+</tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr id="S1.T1.2.2.1" class="ltx_tr">
+<th id="S1.T1.2.2.1.1" class="ltx_td ltx_align_justify ltx_align_top ltx_th ltx_th_row ltx_border_t">
+<span id="S1.T1.2.2.1.1.1" class="ltx_inline-block ltx_align_top">
+<span id="S1.T1.2.2.1.1.1.1" class="ltx_p" style="width:113.8pt;">Radiologist 1</span>
+</span>
+</th>
+<td id="S1.T1.2.2.1.2" class="ltx_td ltx_align_right ltx_border_t">0.383 (0.309, 0.453)</td>
+</tr>
+<tr id="S1.T1.2.3.2" class="ltx_tr">
+<th id="S1.T1.2.3.2.1" class="ltx_td ltx_align_justify ltx_align_top ltx_th ltx_th_row">
+<span id="S1.T1.2.3.2.1.1" class="ltx_inline-block ltx_align_top">
+<span id="S1.T1.2.3.2.1.1.1" class="ltx_p" style="width:113.8pt;">Radiologist 2</span>
+</span>
+</th>
+<td id="S1.T1.2.3.2.2" class="ltx_td ltx_align_right">0.356 (0.282, 0.428)</td>
+</tr>
+<tr id="S1.T1.2.4.3" class="ltx_tr">
+<th id="S1.T1.2.4.3.1" class="ltx_td ltx_align_justify ltx_align_top ltx_th ltx_th_row">
+<span id="S1.T1.2.4.3.1.1" class="ltx_inline-block ltx_align_top">
+<span id="S1.T1.2.4.3.1.1.1" class="ltx_p" style="width:113.8pt;">Radiologist 3</span>
+</span>
+</th>
+<td id="S1.T1.2.4.3.2" class="ltx_td ltx_align_right">0.365 (0.291, 0.435)</td>
+</tr>
+<tr id="S1.T1.2.5.4" class="ltx_tr">
+<th id="S1.T1.2.5.4.1" class="ltx_td ltx_align_justify ltx_align_top ltx_th ltx_th_row">
+<span id="S1.T1.2.5.4.1.1" class="ltx_inline-block ltx_align_top">
+<span id="S1.T1.2.5.4.1.1.1" class="ltx_p" style="width:113.8pt;">Radiologist 4</span>
+</span>
+</th>
+<td id="S1.T1.2.5.4.2" class="ltx_td ltx_align_right">0.442 (0.390, 0.492)</td>
+</tr>
+<tr id="S1.T1.2.6.5" class="ltx_tr">
+<th id="S1.T1.2.6.5.1" class="ltx_td ltx_align_justify ltx_align_top ltx_th ltx_th_row ltx_border_t">
+<span id="S1.T1.2.6.5.1.1" class="ltx_inline-block ltx_align_top">
+<span id="S1.T1.2.6.5.1.1.1" class="ltx_p" style="width:113.8pt;">Radiologist Avg.</span>
+</span>
+</th>
+<td id="S1.T1.2.6.5.2" class="ltx_td ltx_align_right ltx_border_t">0.387 (0.330, 0.442)</td>
+</tr>
+<tr id="S1.T1.2.7.6" class="ltx_tr">
+<th id="S1.T1.2.7.6.1" class="ltx_td ltx_align_justify ltx_align_top ltx_th ltx_th_row ltx_border_bb">
+<span id="S1.T1.2.7.6.1.1" class="ltx_inline-block ltx_align_top">
+<span id="S1.T1.2.7.6.1.1.1" class="ltx_p" style="width:113.8pt;">CheXNet</span>
+</span>
+</th>
+<td id="S1.T1.2.7.6.2" class="ltx_td ltx_align_right ltx_border_bb">0.435 (0.387, 0.481)</td>
+</tr>
+</tbody>
+</table>
+<figcaption class="ltx_caption"><span class="ltx_tag ltx_tag_table"><span id="S1.T1.3.1.1" class="ltx_text" style="font-size:90%;">Table 1</span>: </span><span id="S1.T1.4.2" class="ltx_text" style="font-size:90%;">We compare radiologists and our model on the F1 metric, which is the harmonic average of the precision and recall of the models. CheXNet achieves an F1 score of 0.435 (95% CI 0.387, 0.481), higher than the radiologist average of 0.387 (95% CI 0.330, 0.442). We use the bootstrap to find that the difference in performance is statistically significant.</span></figcaption>
+</figure>
+</section>
+<section id="S2" class="ltx_section">
+<h2 class="ltx_title ltx_title_section">
+<span class="ltx_tag ltx_tag_section">2 </span>CheXNet</h2>
+
+<section id="S2.SS1" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">2.1 </span>Problem Formulation</h3>
+
+<div id="S2.SS1.p1" class="ltx_para">
+<p id="S2.SS1.p1.2" class="ltx_p">The pneumonia detection task is a binary classification problem, where the input is a frontal-view chest X-ray image <math id="S2.SS1.p1.1.m1.1" class="ltx_Math" alttext="X" display="inline"><semantics id="S2.SS1.p1.1.m1.1a"><mi id="S2.SS1.p1.1.m1.1.1" xref="S2.SS1.p1.1.m1.1.1.cmml">X</mi><annotation-xml encoding="MathML-Content" id="S2.SS1.p1.1.m1.1b"><ci id="S2.SS1.p1.1.m1.1.1.cmml" xref="S2.SS1.p1.1.m1.1.1">𝑋</ci></annotation-xml><annotation encoding="application/x-tex" id="S2.SS1.p1.1.m1.1c">X</annotation></semantics></math> and the output is a binary label <math id="S2.SS1.p1.2.m2.2" class="ltx_Math" alttext="y\in\{0,1\}" display="inline"><semantics id="S2.SS1.p1.2.m2.2a"><mrow id="S2.SS1.p1.2.m2.2.3" xref="S2.SS1.p1.2.m2.2.3.cmml"><mi id="S2.SS1.p1.2.m2.2.3.2" xref="S2.SS1.p1.2.m2.2.3.2.cmml">y</mi><mo id="S2.SS1.p1.2.m2.2.3.1" xref="S2.SS1.p1.2.m2.2.3.1.cmml">∈</mo><mrow id="S2.SS1.p1.2.m2.2.3.3.2" xref="S2.SS1.p1.2.m2.2.3.3.1.cmml"><mo stretchy="false" id="S2.SS1.p1.2.m2.2.3.3.2.1" xref="S2.SS1.p1.2.m2.2.3.3.1.cmml">{</mo><mn id="S2.SS1.p1.2.m2.1.1" xref="S2.SS1.p1.2.m2.1.1.cmml">0</mn><mo id="S2.SS1.p1.2.m2.2.3.3.2.2" xref="S2.SS1.p1.2.m2.2.3.3.1.cmml">,</mo><mn id="S2.SS1.p1.2.m2.2.2" xref="S2.SS1.p1.2.m2.2.2.cmml">1</mn><mo stretchy="false" id="S2.SS1.p1.2.m2.2.3.3.2.3" xref="S2.SS1.p1.2.m2.2.3.3.1.cmml">}</mo></mrow></mrow><annotation-xml encoding="MathML-Content" id="S2.SS1.p1.2.m2.2b"><apply id="S2.SS1.p1.2.m2.2.3.cmml" xref="S2.SS1.p1.2.m2.2.3"><in id="S2.SS1.p1.2.m2.2.3.1.cmml" xref="S2.SS1.p1.2.m2.2.3.1"></in><ci id="S2.SS1.p1.2.m2.2.3.2.cmml" xref="S2.SS1.p1.2.m2.2.3.2">𝑦</ci><set id="S2.SS1.p1.2.m2.2.3.3.1.cmml" xref="S2.SS1.p1.2.m2.2.3.3.2"><cn type="integer" id="S2.SS1.p1.2.m2.1.1.cmml" xref="S2.SS1.p1.2.m2.1.1">0</cn><cn type="integer" id="S2.SS1.p1.2.m2.2.2.cmml" xref="S2.SS1.p1.2.m2.2.2">1</cn></set></apply></annotation-xml><annotation encoding="application/x-tex" id="S2.SS1.p1.2.m2.2c">y\in\{0,1\}</annotation></semantics></math> indicating the absence or presence of pneumonia respectively. For a single example in the training set, we optimize the weighted binary cross entropy loss</p>
+<table id="S9.EGx1" class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+
+<tbody id="S2.Ex2">
+<tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><math id="S2.Ex1.m1.2" class="ltx_Math" alttext="\displaystyle L(X,y)" display="inline"><semantics id="S2.Ex1.m1.2a"><mrow id="S2.Ex1.m1.2.3" xref="S2.Ex1.m1.2.3.cmml"><mi id="S2.Ex1.m1.2.3.2" xref="S2.Ex1.m1.2.3.2.cmml">L</mi><mo lspace="0em" rspace="0em" id="S2.Ex1.m1.2.3.1" xref="S2.Ex1.m1.2.3.1.cmml">​</mo><mrow id="S2.Ex1.m1.2.3.3.2" xref="S2.Ex1.m1.2.3.3.1.cmml"><mo stretchy="false" id="S2.Ex1.m1.2.3.3.2.1" xref="S2.Ex1.m1.2.3.3.1.cmml">(</mo><mi id="S2.Ex1.m1.1.1" xref="S2.Ex1.m1.1.1.cmml">X</mi><mo id="S2.Ex1.m1.2.3.3.2.2" xref="S2.Ex1.m1.2.3.3.1.cmml">,</mo><mi id="S2.Ex1.m1.2.2" xref="S2.Ex1.m1.2.2.cmml">y</mi><mo stretchy="false" id="S2.Ex1.m1.2.3.3.2.3" xref="S2.Ex1.m1.2.3.3.1.cmml">)</mo></mrow></mrow><annotation-xml encoding="MathML-Content" id="S2.Ex1.m1.2b"><apply id="S2.Ex1.m1.2.3.cmml" xref="S2.Ex1.m1.2.3"><times id="S2.Ex1.m1.2.3.1.cmml" xref="S2.Ex1.m1.2.3.1"></times><ci id="S2.Ex1.m1.2.3.2.cmml" xref="S2.Ex1.m1.2.3.2">𝐿</ci><interval closure="open" id="S2.Ex1.m1.2.3.3.1.cmml" xref="S2.Ex1.m1.2.3.3.2"><ci id="S2.Ex1.m1.1.1.cmml" xref="S2.Ex1.m1.1.1">𝑋</ci><ci id="S2.Ex1.m1.2.2.cmml" xref="S2.Ex1.m1.2.2">𝑦</ci></interval></apply></annotation-xml><annotation encoding="application/x-tex" id="S2.Ex1.m1.2c">\displaystyle L(X,y)</annotation></semantics></math></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><math id="S2.Ex1.m2.1" class="ltx_Math" alttext="\displaystyle=" display="inline"><semantics id="S2.Ex1.m2.1a"><mo id="S2.Ex1.m2.1.1" xref="S2.Ex1.m2.1.1.cmml">=</mo><annotation-xml encoding="MathML-Content" id="S2.Ex1.m2.1b"><eq id="S2.Ex1.m2.1.1.cmml" xref="S2.Ex1.m2.1.1"></eq></annotation-xml><annotation encoding="application/x-tex" id="S2.Ex1.m2.1c">\displaystyle=</annotation></semantics></math></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><math id="S2.Ex1.m3.1" class="ltx_Math" alttext="\displaystyle-w_{+}\cdot y\log p(Y=1|X)" display="inline"><semantics id="S2.Ex1.m3.1a"><mrow id="S2.Ex1.m3.1.1" xref="S2.Ex1.m3.1.1.cmml"><mo id="S2.Ex1.m3.1.1a" xref="S2.Ex1.m3.1.1.cmml">−</mo><mrow id="S2.Ex1.m3.1.1.1" xref="S2.Ex1.m3.1.1.1.cmml"><mrow id="S2.Ex1.m3.1.1.1.3" xref="S2.Ex1.m3.1.1.1.3.cmml"><msub id="S2.Ex1.m3.1.1.1.3.2" xref="S2.Ex1.m3.1.1.1.3.2.cmml"><mi id="S2.Ex1.m3.1.1.1.3.2.2" xref="S2.Ex1.m3.1.1.1.3.2.2.cmml">w</mi><mo id="S2.Ex1.m3.1.1.1.3.2.3" xref="S2.Ex1.m3.1.1.1.3.2.3.cmml">+</mo></msub><mo lspace="0.222em" rspace="0.222em" id="S2.Ex1.m3.1.1.1.3.1" xref="S2.Ex1.m3.1.1.1.3.1.cmml">⋅</mo><mi id="S2.Ex1.m3.1.1.1.3.3" xref="S2.Ex1.m3.1.1.1.3.3.cmml">y</mi></mrow><mo lspace="0.167em" rspace="0em" id="S2.Ex1.m3.1.1.1.2" xref="S2.Ex1.m3.1.1.1.2.cmml">​</mo><mrow id="S2.Ex1.m3.1.1.1.4" xref="S2.Ex1.m3.1.1.1.4.cmml"><mi id="S2.Ex1.m3.1.1.1.4.1" xref="S2.Ex1.m3.1.1.1.4.1.cmml">log</mi><mo lspace="0.167em" id="S2.Ex1.m3.1.1.1.4a" xref="S2.Ex1.m3.1.1.1.4.cmml">⁡</mo><mi id="S2.Ex1.m3.1.1.1.4.2" xref="S2.Ex1.m3.1.1.1.4.2.cmml">p</mi></mrow><mo lspace="0em" rspace="0em" id="S2.Ex1.m3.1.1.1.2a" xref="S2.Ex1.m3.1.1.1.2.cmml">​</mo><mrow id="S2.Ex1.m3.1.1.1.1.1" xref="S2.Ex1.m3.1.1.1.1.1.1.cmml"><mo stretchy="false" id="S2.Ex1.m3.1.1.1.1.1.2" xref="S2.Ex1.m3.1.1.1.1.1.1.cmml">(</mo><mrow id="S2.Ex1.m3.1.1.1.1.1.1" xref="S2.Ex1.m3.1.1.1.1.1.1.cmml"><mi id="S2.Ex1.m3.1.1.1.1.1.1.2" xref="S2.Ex1.m3.1.1.1.1.1.1.2.cmml">Y</mi><mo id="S2.Ex1.m3.1.1.1.1.1.1.1" xref="S2.Ex1.m3.1.1.1.1.1.1.1.cmml">=</mo><mrow id="S2.Ex1.m3.1.1.1.1.1.1.3" xref="S2.Ex1.m3.1.1.1.1.1.1.3.cmml"><mn id="S2.Ex1.m3.1.1.1.1.1.1.3.2" xref="S2.Ex1.m3.1.1.1.1.1.1.3.2.cmml">1</mn><mo fence="false" id="S2.Ex1.m3.1.1.1.1.1.1.3.1" xref="S2.Ex1.m3.1.1.1.1.1.1.3.1.cmml">|</mo><mi id="S2.Ex1.m3.1.1.1.1.1.1.3.3" xref="S2.Ex1.m3.1.1.1.1.1.1.3.3.cmml">X</mi></mrow></mrow><mo stretchy="false" id="S2.Ex1.m3.1.1.1.1.1.3" xref="S2.Ex1.m3.1.1.1.1.1.1.cmml">)</mo></mrow></mrow></mrow><annotation-xml encoding="MathML-Content" id="S2.Ex1.m3.1b"><apply id="S2.Ex1.m3.1.1.cmml" xref="S2.Ex1.m3.1.1"><minus id="S2.Ex1.m3.1.1.2.cmml" xref="S2.Ex1.m3.1.1"></minus><apply id="S2.Ex1.m3.1.1.1.cmml" xref="S2.Ex1.m3.1.1.1"><times id="S2.Ex1.m3.1.1.1.2.cmml" xref="S2.Ex1.m3.1.1.1.2"></times><apply id="S2.Ex1.m3.1.1.1.3.cmml" xref="S2.Ex1.m3.1.1.1.3"><ci id="S2.Ex1.m3.1.1.1.3.1.cmml" xref="S2.Ex1.m3.1.1.1.3.1">⋅</ci><apply id="S2.Ex1.m3.1.1.1.3.2.cmml" xref="S2.Ex1.m3.1.1.1.3.2"><csymbol cd="ambiguous" id="S2.Ex1.m3.1.1.1.3.2.1.cmml" xref="S2.Ex1.m3.1.1.1.3.2">subscript</csymbol><ci id="S2.Ex1.m3.1.1.1.3.2.2.cmml" xref="S2.Ex1.m3.1.1.1.3.2.2">𝑤</ci><plus id="S2.Ex1.m3.1.1.1.3.2.3.cmml" xref="S2.Ex1.m3.1.1.1.3.2.3"></plus></apply><ci id="S2.Ex1.m3.1.1.1.3.3.cmml" xref="S2.Ex1.m3.1.1.1.3.3">𝑦</ci></apply><apply id="S2.Ex1.m3.1.1.1.4.cmml" xref="S2.Ex1.m3.1.1.1.4"><log id="S2.Ex1.m3.1.1.1.4.1.cmml" xref="S2.Ex1.m3.1.1.1.4.1"></log><ci id="S2.Ex1.m3.1.1.1.4.2.cmml" xref="S2.Ex1.m3.1.1.1.4.2">𝑝</ci></apply><apply id="S2.Ex1.m3.1.1.1.1.1.1.cmml" xref="S2.Ex1.m3.1.1.1.1.1"><eq id="S2.Ex1.m3.1.1.1.1.1.1.1.cmml" xref="S2.Ex1.m3.1.1.1.1.1.1.1"></eq><ci id="S2.Ex1.m3.1.1.1.1.1.1.2.cmml" xref="S2.Ex1.m3.1.1.1.1.1.1.2">𝑌</ci><apply id="S2.Ex1.m3.1.1.1.1.1.1.3.cmml" xref="S2.Ex1.m3.1.1.1.1.1.1.3"><csymbol cd="latexml" id="S2.Ex1.m3.1.1.1.1.1.1.3.1.cmml" xref="S2.Ex1.m3.1.1.1.1.1.1.3.1">conditional</csymbol><cn type="integer" id="S2.Ex1.m3.1.1.1.1.1.1.3.2.cmml" xref="S2.Ex1.m3.1.1.1.1.1.1.3.2">1</cn><ci id="S2.Ex1.m3.1.1.1.1.1.1.3.3.cmml" xref="S2.Ex1.m3.1.1.1.1.1.1.3.3">𝑋</ci></apply></apply></apply></apply></annotation-xml><annotation encoding="application/x-tex" id="S2.Ex1.m3.1c">\displaystyle-w_{+}\cdot y\log p(Y=1|X)</annotation></semantics></math></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+</tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><math id="S2.Ex2.m1.1" class="ltx_Math" alttext="\displaystyle-w_{-}\cdot(1-y)\log p(Y=0|X)," display="inline"><semantics id="S2.Ex2.m1.1a"><mrow id="S2.Ex2.m1.1.1.1" xref="S2.Ex2.m1.1.1.1.1.cmml"><mrow id="S2.Ex2.m1.1.1.1.1" xref="S2.Ex2.m1.1.1.1.1.cmml"><mo id="S2.Ex2.m1.1.1.1.1a" xref="S2.Ex2.m1.1.1.1.1.cmml">−</mo><mrow id="S2.Ex2.m1.1.1.1.1.2" xref="S2.Ex2.m1.1.1.1.1.2.cmml"><mrow id="S2.Ex2.m1.1.1.1.1.1.1" xref="S2.Ex2.m1.1.1.1.1.1.1.cmml"><msub id="S2.Ex2.m1.1.1.1.1.1.1.3" xref="S2.Ex2.m1.1.1.1.1.1.1.3.cmml"><mi id="S2.Ex2.m1.1.1.1.1.1.1.3.2" xref="S2.Ex2.m1.1.1.1.1.1.1.3.2.cmml">w</mi><mo id="S2.Ex2.m1.1.1.1.1.1.1.3.3" xref="S2.Ex2.m1.1.1.1.1.1.1.3.3.cmml">−</mo></msub><mo lspace="0.222em" rspace="0.222em" id="S2.Ex2.m1.1.1.1.1.1.1.2" xref="S2.Ex2.m1.1.1.1.1.1.1.2.cmml">⋅</mo><mrow id="S2.Ex2.m1.1.1.1.1.1.1.1.1" xref="S2.Ex2.m1.1.1.1.1.1.1.1.1.1.cmml"><mo stretchy="false" id="S2.Ex2.m1.1.1.1.1.1.1.1.1.2" xref="S2.Ex2.m1.1.1.1.1.1.1.1.1.1.cmml">(</mo><mrow id="S2.Ex2.m1.1.1.1.1.1.1.1.1.1" xref="S2.Ex2.m1.1.1.1.1.1.1.1.1.1.cmml"><mn id="S2.Ex2.m1.1.1.1.1.1.1.1.1.1.2" xref="S2.Ex2.m1.1.1.1.1.1.1.1.1.1.2.cmml">1</mn><mo id="S2.Ex2.m1.1.1.1.1.1.1.1.1.1.1" xref="S2.Ex2.m1.1.1.1.1.1.1.1.1.1.1.cmml">−</mo><mi id="S2.Ex2.m1.1.1.1.1.1.1.1.1.1.3" xref="S2.Ex2.m1.1.1.1.1.1.1.1.1.1.3.cmml">y</mi></mrow><mo stretchy="false" id="S2.Ex2.m1.1.1.1.1.1.1.1.1.3" xref="S2.Ex2.m1.1.1.1.1.1.1.1.1.1.cmml">)</mo></mrow></mrow><mo lspace="0.167em" rspace="0em" id="S2.Ex2.m1.1.1.1.1.2.3" xref="S2.Ex2.m1.1.1.1.1.2.3.cmml">​</mo><mrow id="S2.Ex2.m1.1.1.1.1.2.4" xref="S2.Ex2.m1.1.1.1.1.2.4.cmml"><mi id="S2.Ex2.m1.1.1.1.1.2.4.1" xref="S2.Ex2.m1.1.1.1.1.2.4.1.cmml">log</mi><mo lspace="0.167em" id="S2.Ex2.m1.1.1.1.1.2.4a" xref="S2.Ex2.m1.1.1.1.1.2.4.cmml">⁡</mo><mi id="S2.Ex2.m1.1.1.1.1.2.4.2" xref="S2.Ex2.m1.1.1.1.1.2.4.2.cmml">p</mi></mrow><mo lspace="0em" rspace="0em" id="S2.Ex2.m1.1.1.1.1.2.3a" xref="S2.Ex2.m1.1.1.1.1.2.3.cmml">​</mo><mrow id="S2.Ex2.m1.1.1.1.1.2.2.1" xref="S2.Ex2.m1.1.1.1.1.2.2.1.1.cmml"><mo stretchy="false" id="S2.Ex2.m1.1.1.1.1.2.2.1.2" xref="S2.Ex2.m1.1.1.1.1.2.2.1.1.cmml">(</mo><mrow id="S2.Ex2.m1.1.1.1.1.2.2.1.1" xref="S2.Ex2.m1.1.1.1.1.2.2.1.1.cmml"><mi id="S2.Ex2.m1.1.1.1.1.2.2.1.1.2" xref="S2.Ex2.m1.1.1.1.1.2.2.1.1.2.cmml">Y</mi><mo id="S2.Ex2.m1.1.1.1.1.2.2.1.1.1" xref="S2.Ex2.m1.1.1.1.1.2.2.1.1.1.cmml">=</mo><mrow id="S2.Ex2.m1.1.1.1.1.2.2.1.1.3" xref="S2.Ex2.m1.1.1.1.1.2.2.1.1.3.cmml"><mn id="S2.Ex2.m1.1.1.1.1.2.2.1.1.3.2" xref="S2.Ex2.m1.1.1.1.1.2.2.1.1.3.2.cmml">0</mn><mo fence="false" id="S2.Ex2.m1.1.1.1.1.2.2.1.1.3.1" xref="S2.Ex2.m1.1.1.1.1.2.2.1.1.3.1.cmml">|</mo><mi id="S2.Ex2.m1.1.1.1.1.2.2.1.1.3.3" xref="S2.Ex2.m1.1.1.1.1.2.2.1.1.3.3.cmml">X</mi></mrow></mrow><mo stretchy="false" id="S2.Ex2.m1.1.1.1.1.2.2.1.3" xref="S2.Ex2.m1.1.1.1.1.2.2.1.1.cmml">)</mo></mrow></mrow></mrow><mo id="S2.Ex2.m1.1.1.1.2" xref="S2.Ex2.m1.1.1.1.1.cmml">,</mo></mrow><annotation-xml encoding="MathML-Content" id="S2.Ex2.m1.1b"><apply id="S2.Ex2.m1.1.1.1.1.cmml" xref="S2.Ex2.m1.1.1.1"><minus id="S2.Ex2.m1.1.1.1.1.3.cmml" xref="S2.Ex2.m1.1.1.1"></minus><apply id="S2.Ex2.m1.1.1.1.1.2.cmml" xref="S2.Ex2.m1.1.1.1.1.2"><times id="S2.Ex2.m1.1.1.1.1.2.3.cmml" xref="S2.Ex2.m1.1.1.1.1.2.3"></times><apply id="S2.Ex2.m1.1.1.1.1.1.1.cmml" xref="S2.Ex2.m1.1.1.1.1.1.1"><ci id="S2.Ex2.m1.1.1.1.1.1.1.2.cmml" xref="S2.Ex2.m1.1.1.1.1.1.1.2">⋅</ci><apply id="S2.Ex2.m1.1.1.1.1.1.1.3.cmml" xref="S2.Ex2.m1.1.1.1.1.1.1.3"><csymbol cd="ambiguous" id="S2.Ex2.m1.1.1.1.1.1.1.3.1.cmml" xref="S2.Ex2.m1.1.1.1.1.1.1.3">subscript</csymbol><ci id="S2.Ex2.m1.1.1.1.1.1.1.3.2.cmml" xref="S2.Ex2.m1.1.1.1.1.1.1.3.2">𝑤</ci><minus id="S2.Ex2.m1.1.1.1.1.1.1.3.3.cmml" xref="S2.Ex2.m1.1.1.1.1.1.1.3.3"></minus></apply><apply id="S2.Ex2.m1.1.1.1.1.1.1.1.1.1.cmml" xref="S2.Ex2.m1.1.1.1.1.1.1.1.1"><minus id="S2.Ex2.m1.1.1.1.1.1.1.1.1.1.1.cmml" xref="S2.Ex2.m1.1.1.1.1.1.1.1.1.1.1"></minus><cn type="integer" id="S2.Ex2.m1.1.1.1.1.1.1.1.1.1.2.cmml" xref="S2.Ex2.m1.1.1.1.1.1.1.1.1.1.2">1</cn><ci id="S2.Ex2.m1.1.1.1.1.1.1.1.1.1.3.cmml" xref="S2.Ex2.m1.1.1.1.1.1.1.1.1.1.3">𝑦</ci></apply></apply><apply id="S2.Ex2.m1.1.1.1.1.2.4.cmml" xref="S2.Ex2.m1.1.1.1.1.2.4"><log id="S2.Ex2.m1.1.1.1.1.2.4.1.cmml" xref="S2.Ex2.m1.1.1.1.1.2.4.1"></log><ci id="S2.Ex2.m1.1.1.1.1.2.4.2.cmml" xref="S2.Ex2.m1.1.1.1.1.2.4.2">𝑝</ci></apply><apply id="S2.Ex2.m1.1.1.1.1.2.2.1.1.cmml" xref="S2.Ex2.m1.1.1.1.1.2.2.1"><eq id="S2.Ex2.m1.1.1.1.1.2.2.1.1.1.cmml" xref="S2.Ex2.m1.1.1.1.1.2.2.1.1.1"></eq><ci id="S2.Ex2.m1.1.1.1.1.2.2.1.1.2.cmml" xref="S2.Ex2.m1.1.1.1.1.2.2.1.1.2">𝑌</ci><apply id="S2.Ex2.m1.1.1.1.1.2.2.1.1.3.cmml" xref="S2.Ex2.m1.1.1.1.1.2.2.1.1.3"><csymbol cd="latexml" id="S2.Ex2.m1.1.1.1.1.2.2.1.1.3.1.cmml" xref="S2.Ex2.m1.1.1.1.1.2.2.1.1.3.1">conditional</csymbol><cn type="integer" id="S2.Ex2.m1.1.1.1.1.2.2.1.1.3.2.cmml" xref="S2.Ex2.m1.1.1.1.1.2.2.1.1.3.2">0</cn><ci id="S2.Ex2.m1.1.1.1.1.2.2.1.1.3.3.cmml" xref="S2.Ex2.m1.1.1.1.1.2.2.1.1.3.3">𝑋</ci></apply></apply></apply></apply></annotation-xml><annotation encoding="application/x-tex" id="S2.Ex2.m1.1c">\displaystyle-w_{-}\cdot(1-y)\log p(Y=0|X),</annotation></semantics></math></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+</tr>
+</tbody>
+</table>
+<p id="S2.SS1.p1.8" class="ltx_p">where <math id="S2.SS1.p1.3.m1.1" class="ltx_Math" alttext="p(Y=i|X)" display="inline"><semantics id="S2.SS1.p1.3.m1.1a"><mrow id="S2.SS1.p1.3.m1.1.1" xref="S2.SS1.p1.3.m1.1.1.cmml"><mi id="S2.SS1.p1.3.m1.1.1.3" xref="S2.SS1.p1.3.m1.1.1.3.cmml">p</mi><mo lspace="0em" rspace="0em" id="S2.SS1.p1.3.m1.1.1.2" xref="S2.SS1.p1.3.m1.1.1.2.cmml">​</mo><mrow id="S2.SS1.p1.3.m1.1.1.1.1" xref="S2.SS1.p1.3.m1.1.1.1.1.1.cmml"><mo stretchy="false" id="S2.SS1.p1.3.m1.1.1.1.1.2" xref="S2.SS1.p1.3.m1.1.1.1.1.1.cmml">(</mo><mrow id="S2.SS1.p1.3.m1.1.1.1.1.1" xref="S2.SS1.p1.3.m1.1.1.1.1.1.cmml"><mi id="S2.SS1.p1.3.m1.1.1.1.1.1.2" xref="S2.SS1.p1.3.m1.1.1.1.1.1.2.cmml">Y</mi><mo id="S2.SS1.p1.3.m1.1.1.1.1.1.1" xref="S2.SS1.p1.3.m1.1.1.1.1.1.1.cmml">=</mo><mrow id="S2.SS1.p1.3.m1.1.1.1.1.1.3" xref="S2.SS1.p1.3.m1.1.1.1.1.1.3.cmml"><mi id="S2.SS1.p1.3.m1.1.1.1.1.1.3.2" xref="S2.SS1.p1.3.m1.1.1.1.1.1.3.2.cmml">i</mi><mo fence="false" id="S2.SS1.p1.3.m1.1.1.1.1.1.3.1" xref="S2.SS1.p1.3.m1.1.1.1.1.1.3.1.cmml">|</mo><mi id="S2.SS1.p1.3.m1.1.1.1.1.1.3.3" xref="S2.SS1.p1.3.m1.1.1.1.1.1.3.3.cmml">X</mi></mrow></mrow><mo stretchy="false" id="S2.SS1.p1.3.m1.1.1.1.1.3" xref="S2.SS1.p1.3.m1.1.1.1.1.1.cmml">)</mo></mrow></mrow><annotation-xml encoding="MathML-Content" id="S2.SS1.p1.3.m1.1b"><apply id="S2.SS1.p1.3.m1.1.1.cmml" xref="S2.SS1.p1.3.m1.1.1"><times id="S2.SS1.p1.3.m1.1.1.2.cmml" xref="S2.SS1.p1.3.m1.1.1.2"></times><ci id="S2.SS1.p1.3.m1.1.1.3.cmml" xref="S2.SS1.p1.3.m1.1.1.3">𝑝</ci><apply id="S2.SS1.p1.3.m1.1.1.1.1.1.cmml" xref="S2.SS1.p1.3.m1.1.1.1.1"><eq id="S2.SS1.p1.3.m1.1.1.1.1.1.1.cmml" xref="S2.SS1.p1.3.m1.1.1.1.1.1.1"></eq><ci id="S2.SS1.p1.3.m1.1.1.1.1.1.2.cmml" xref="S2.SS1.p1.3.m1.1.1.1.1.1.2">𝑌</ci><apply id="S2.SS1.p1.3.m1.1.1.1.1.1.3.cmml" xref="S2.SS1.p1.3.m1.1.1.1.1.1.3"><csymbol cd="latexml" id="S2.SS1.p1.3.m1.1.1.1.1.1.3.1.cmml" xref="S2.SS1.p1.3.m1.1.1.1.1.1.3.1">conditional</csymbol><ci id="S2.SS1.p1.3.m1.1.1.1.1.1.3.2.cmml" xref="S2.SS1.p1.3.m1.1.1.1.1.1.3.2">𝑖</ci><ci id="S2.SS1.p1.3.m1.1.1.1.1.1.3.3.cmml" xref="S2.SS1.p1.3.m1.1.1.1.1.1.3.3">𝑋</ci></apply></apply></apply></annotation-xml><annotation encoding="application/x-tex" id="S2.SS1.p1.3.m1.1c">p(Y=i|X)</annotation></semantics></math> is the probability that the network assigns to the label <math id="S2.SS1.p1.4.m2.1" class="ltx_Math" alttext="i" display="inline"><semantics id="S2.SS1.p1.4.m2.1a"><mi id="S2.SS1.p1.4.m2.1.1" xref="S2.SS1.p1.4.m2.1.1.cmml">i</mi><annotation-xml encoding="MathML-Content" id="S2.SS1.p1.4.m2.1b"><ci id="S2.SS1.p1.4.m2.1.1.cmml" xref="S2.SS1.p1.4.m2.1.1">𝑖</ci></annotation-xml><annotation encoding="application/x-tex" id="S2.SS1.p1.4.m2.1c">i</annotation></semantics></math>, <math id="S2.SS1.p1.5.m3.4" class="ltx_Math" alttext="w_{+}=|N|/(|P|+|N|)" display="inline"><semantics id="S2.SS1.p1.5.m3.4a"><mrow id="S2.SS1.p1.5.m3.4.4" xref="S2.SS1.p1.5.m3.4.4.cmml"><msub id="S2.SS1.p1.5.m3.4.4.3" xref="S2.SS1.p1.5.m3.4.4.3.cmml"><mi id="S2.SS1.p1.5.m3.4.4.3.2" xref="S2.SS1.p1.5.m3.4.4.3.2.cmml">w</mi><mo id="S2.SS1.p1.5.m3.4.4.3.3" xref="S2.SS1.p1.5.m3.4.4.3.3.cmml">+</mo></msub><mo id="S2.SS1.p1.5.m3.4.4.2" xref="S2.SS1.p1.5.m3.4.4.2.cmml">=</mo><mrow id="S2.SS1.p1.5.m3.4.4.1" xref="S2.SS1.p1.5.m3.4.4.1.cmml"><mrow id="S2.SS1.p1.5.m3.4.4.1.3.2" xref="S2.SS1.p1.5.m3.4.4.1.3.1.cmml"><mo stretchy="false" id="S2.SS1.p1.5.m3.4.4.1.3.2.1" xref="S2.SS1.p1.5.m3.4.4.1.3.1.1.cmml">|</mo><mi id="S2.SS1.p1.5.m3.1.1" xref="S2.SS1.p1.5.m3.1.1.cmml">N</mi><mo stretchy="false" id="S2.SS1.p1.5.m3.4.4.1.3.2.2" xref="S2.SS1.p1.5.m3.4.4.1.3.1.1.cmml">|</mo></mrow><mo id="S2.SS1.p1.5.m3.4.4.1.2" xref="S2.SS1.p1.5.m3.4.4.1.2.cmml">/</mo><mrow id="S2.SS1.p1.5.m3.4.4.1.1.1" xref="S2.SS1.p1.5.m3.4.4.1.1.1.1.cmml"><mo stretchy="false" id="S2.SS1.p1.5.m3.4.4.1.1.1.2" xref="S2.SS1.p1.5.m3.4.4.1.1.1.1.cmml">(</mo><mrow id="S2.SS1.p1.5.m3.4.4.1.1.1.1" xref="S2.SS1.p1.5.m3.4.4.1.1.1.1.cmml"><mrow id="S2.SS1.p1.5.m3.4.4.1.1.1.1.2.2" xref="S2.SS1.p1.5.m3.4.4.1.1.1.1.2.1.cmml"><mo stretchy="false" id="S2.SS1.p1.5.m3.4.4.1.1.1.1.2.2.1" xref="S2.SS1.p1.5.m3.4.4.1.1.1.1.2.1.1.cmml">|</mo><mi id="S2.SS1.p1.5.m3.2.2" xref="S2.SS1.p1.5.m3.2.2.cmml">P</mi><mo stretchy="false" id="S2.SS1.p1.5.m3.4.4.1.1.1.1.2.2.2" xref="S2.SS1.p1.5.m3.4.4.1.1.1.1.2.1.1.cmml">|</mo></mrow><mo id="S2.SS1.p1.5.m3.4.4.1.1.1.1.1" xref="S2.SS1.p1.5.m3.4.4.1.1.1.1.1.cmml">+</mo><mrow id="S2.SS1.p1.5.m3.4.4.1.1.1.1.3.2" xref="S2.SS1.p1.5.m3.4.4.1.1.1.1.3.1.cmml"><mo stretchy="false" id="S2.SS1.p1.5.m3.4.4.1.1.1.1.3.2.1" xref="S2.SS1.p1.5.m3.4.4.1.1.1.1.3.1.1.cmml">|</mo><mi id="S2.SS1.p1.5.m3.3.3" xref="S2.SS1.p1.5.m3.3.3.cmml">N</mi><mo stretchy="false" id="S2.SS1.p1.5.m3.4.4.1.1.1.1.3.2.2" xref="S2.SS1.p1.5.m3.4.4.1.1.1.1.3.1.1.cmml">|</mo></mrow></mrow><mo stretchy="false" id="S2.SS1.p1.5.m3.4.4.1.1.1.3" xref="S2.SS1.p1.5.m3.4.4.1.1.1.1.cmml">)</mo></mrow></mrow></mrow><annotation-xml encoding="MathML-Content" id="S2.SS1.p1.5.m3.4b"><apply id="S2.SS1.p1.5.m3.4.4.cmml" xref="S2.SS1.p1.5.m3.4.4"><eq id="S2.SS1.p1.5.m3.4.4.2.cmml" xref="S2.SS1.p1.5.m3.4.4.2"></eq><apply id="S2.SS1.p1.5.m3.4.4.3.cmml" xref="S2.SS1.p1.5.m3.4.4.3"><csymbol cd="ambiguous" id="S2.SS1.p1.5.m3.4.4.3.1.cmml" xref="S2.SS1.p1.5.m3.4.4.3">subscript</csymbol><ci id="S2.SS1.p1.5.m3.4.4.3.2.cmml" xref="S2.SS1.p1.5.m3.4.4.3.2">𝑤</ci><plus id="S2.SS1.p1.5.m3.4.4.3.3.cmml" xref="S2.SS1.p1.5.m3.4.4.3.3"></plus></apply><apply id="S2.SS1.p1.5.m3.4.4.1.cmml" xref="S2.SS1.p1.5.m3.4.4.1"><divide id="S2.SS1.p1.5.m3.4.4.1.2.cmml" xref="S2.SS1.p1.5.m3.4.4.1.2"></divide><apply id="S2.SS1.p1.5.m3.4.4.1.3.1.cmml" xref="S2.SS1.p1.5.m3.4.4.1.3.2"><abs id="S2.SS1.p1.5.m3.4.4.1.3.1.1.cmml" xref="S2.SS1.p1.5.m3.4.4.1.3.2.1"></abs><ci id="S2.SS1.p1.5.m3.1.1.cmml" xref="S2.SS1.p1.5.m3.1.1">𝑁</ci></apply><apply id="S2.SS1.p1.5.m3.4.4.1.1.1.1.cmml" xref="S2.SS1.p1.5.m3.4.4.1.1.1"><plus id="S2.SS1.p1.5.m3.4.4.1.1.1.1.1.cmml" xref="S2.SS1.p1.5.m3.4.4.1.1.1.1.1"></plus><apply id="S2.SS1.p1.5.m3.4.4.1.1.1.1.2.1.cmml" xref="S2.SS1.p1.5.m3.4.4.1.1.1.1.2.2"><abs id="S2.SS1.p1.5.m3.4.4.1.1.1.1.2.1.1.cmml" xref="S2.SS1.p1.5.m3.4.4.1.1.1.1.2.2.1"></abs><ci id="S2.SS1.p1.5.m3.2.2.cmml" xref="S2.SS1.p1.5.m3.2.2">𝑃</ci></apply><apply id="S2.SS1.p1.5.m3.4.4.1.1.1.1.3.1.cmml" xref="S2.SS1.p1.5.m3.4.4.1.1.1.1.3.2"><abs id="S2.SS1.p1.5.m3.4.4.1.1.1.1.3.1.1.cmml" xref="S2.SS1.p1.5.m3.4.4.1.1.1.1.3.2.1"></abs><ci id="S2.SS1.p1.5.m3.3.3.cmml" xref="S2.SS1.p1.5.m3.3.3">𝑁</ci></apply></apply></apply></apply></annotation-xml><annotation encoding="application/x-tex" id="S2.SS1.p1.5.m3.4c">w_{+}=|N|/(|P|+|N|)</annotation></semantics></math>, and <math id="S2.SS1.p1.6.m4.4" class="ltx_Math" alttext="w_{-}=|P|/(|P|+|N|)" display="inline"><semantics id="S2.SS1.p1.6.m4.4a"><mrow id="S2.SS1.p1.6.m4.4.4" xref="S2.SS1.p1.6.m4.4.4.cmml"><msub id="S2.SS1.p1.6.m4.4.4.3" xref="S2.SS1.p1.6.m4.4.4.3.cmml"><mi id="S2.SS1.p1.6.m4.4.4.3.2" xref="S2.SS1.p1.6.m4.4.4.3.2.cmml">w</mi><mo id="S2.SS1.p1.6.m4.4.4.3.3" xref="S2.SS1.p1.6.m4.4.4.3.3.cmml">−</mo></msub><mo id="S2.SS1.p1.6.m4.4.4.2" xref="S2.SS1.p1.6.m4.4.4.2.cmml">=</mo><mrow id="S2.SS1.p1.6.m4.4.4.1" xref="S2.SS1.p1.6.m4.4.4.1.cmml"><mrow id="S2.SS1.p1.6.m4.4.4.1.3.2" xref="S2.SS1.p1.6.m4.4.4.1.3.1.cmml"><mo stretchy="false" id="S2.SS1.p1.6.m4.4.4.1.3.2.1" xref="S2.SS1.p1.6.m4.4.4.1.3.1.1.cmml">|</mo><mi id="S2.SS1.p1.6.m4.1.1" xref="S2.SS1.p1.6.m4.1.1.cmml">P</mi><mo stretchy="false" id="S2.SS1.p1.6.m4.4.4.1.3.2.2" xref="S2.SS1.p1.6.m4.4.4.1.3.1.1.cmml">|</mo></mrow><mo id="S2.SS1.p1.6.m4.4.4.1.2" xref="S2.SS1.p1.6.m4.4.4.1.2.cmml">/</mo><mrow id="S2.SS1.p1.6.m4.4.4.1.1.1" xref="S2.SS1.p1.6.m4.4.4.1.1.1.1.cmml"><mo stretchy="false" id="S2.SS1.p1.6.m4.4.4.1.1.1.2" xref="S2.SS1.p1.6.m4.4.4.1.1.1.1.cmml">(</mo><mrow id="S2.SS1.p1.6.m4.4.4.1.1.1.1" xref="S2.SS1.p1.6.m4.4.4.1.1.1.1.cmml"><mrow id="S2.SS1.p1.6.m4.4.4.1.1.1.1.2.2" xref="S2.SS1.p1.6.m4.4.4.1.1.1.1.2.1.cmml"><mo stretchy="false" id="S2.SS1.p1.6.m4.4.4.1.1.1.1.2.2.1" xref="S2.SS1.p1.6.m4.4.4.1.1.1.1.2.1.1.cmml">|</mo><mi id="S2.SS1.p1.6.m4.2.2" xref="S2.SS1.p1.6.m4.2.2.cmml">P</mi><mo stretchy="false" id="S2.SS1.p1.6.m4.4.4.1.1.1.1.2.2.2" xref="S2.SS1.p1.6.m4.4.4.1.1.1.1.2.1.1.cmml">|</mo></mrow><mo id="S2.SS1.p1.6.m4.4.4.1.1.1.1.1" xref="S2.SS1.p1.6.m4.4.4.1.1.1.1.1.cmml">+</mo><mrow id="S2.SS1.p1.6.m4.4.4.1.1.1.1.3.2" xref="S2.SS1.p1.6.m4.4.4.1.1.1.1.3.1.cmml"><mo stretchy="false" id="S2.SS1.p1.6.m4.4.4.1.1.1.1.3.2.1" xref="S2.SS1.p1.6.m4.4.4.1.1.1.1.3.1.1.cmml">|</mo><mi id="S2.SS1.p1.6.m4.3.3" xref="S2.SS1.p1.6.m4.3.3.cmml">N</mi><mo stretchy="false" id="S2.SS1.p1.6.m4.4.4.1.1.1.1.3.2.2" xref="S2.SS1.p1.6.m4.4.4.1.1.1.1.3.1.1.cmml">|</mo></mrow></mrow><mo stretchy="false" id="S2.SS1.p1.6.m4.4.4.1.1.1.3" xref="S2.SS1.p1.6.m4.4.4.1.1.1.1.cmml">)</mo></mrow></mrow></mrow><annotation-xml encoding="MathML-Content" id="S2.SS1.p1.6.m4.4b"><apply id="S2.SS1.p1.6.m4.4.4.cmml" xref="S2.SS1.p1.6.m4.4.4"><eq id="S2.SS1.p1.6.m4.4.4.2.cmml" xref="S2.SS1.p1.6.m4.4.4.2"></eq><apply id="S2.SS1.p1.6.m4.4.4.3.cmml" xref="S2.SS1.p1.6.m4.4.4.3"><csymbol cd="ambiguous" id="S2.SS1.p1.6.m4.4.4.3.1.cmml" xref="S2.SS1.p1.6.m4.4.4.3">subscript</csymbol><ci id="S2.SS1.p1.6.m4.4.4.3.2.cmml" xref="S2.SS1.p1.6.m4.4.4.3.2">𝑤</ci><minus id="S2.SS1.p1.6.m4.4.4.3.3.cmml" xref="S2.SS1.p1.6.m4.4.4.3.3"></minus></apply><apply id="S2.SS1.p1.6.m4.4.4.1.cmml" xref="S2.SS1.p1.6.m4.4.4.1"><divide id="S2.SS1.p1.6.m4.4.4.1.2.cmml" xref="S2.SS1.p1.6.m4.4.4.1.2"></divide><apply id="S2.SS1.p1.6.m4.4.4.1.3.1.cmml" xref="S2.SS1.p1.6.m4.4.4.1.3.2"><abs id="S2.SS1.p1.6.m4.4.4.1.3.1.1.cmml" xref="S2.SS1.p1.6.m4.4.4.1.3.2.1"></abs><ci id="S2.SS1.p1.6.m4.1.1.cmml" xref="S2.SS1.p1.6.m4.1.1">𝑃</ci></apply><apply id="S2.SS1.p1.6.m4.4.4.1.1.1.1.cmml" xref="S2.SS1.p1.6.m4.4.4.1.1.1"><plus id="S2.SS1.p1.6.m4.4.4.1.1.1.1.1.cmml" xref="S2.SS1.p1.6.m4.4.4.1.1.1.1.1"></plus><apply id="S2.SS1.p1.6.m4.4.4.1.1.1.1.2.1.cmml" xref="S2.SS1.p1.6.m4.4.4.1.1.1.1.2.2"><abs id="S2.SS1.p1.6.m4.4.4.1.1.1.1.2.1.1.cmml" xref="S2.SS1.p1.6.m4.4.4.1.1.1.1.2.2.1"></abs><ci id="S2.SS1.p1.6.m4.2.2.cmml" xref="S2.SS1.p1.6.m4.2.2">𝑃</ci></apply><apply id="S2.SS1.p1.6.m4.4.4.1.1.1.1.3.1.cmml" xref="S2.SS1.p1.6.m4.4.4.1.1.1.1.3.2"><abs id="S2.SS1.p1.6.m4.4.4.1.1.1.1.3.1.1.cmml" xref="S2.SS1.p1.6.m4.4.4.1.1.1.1.3.2.1"></abs><ci id="S2.SS1.p1.6.m4.3.3.cmml" xref="S2.SS1.p1.6.m4.3.3">𝑁</ci></apply></apply></apply></apply></annotation-xml><annotation encoding="application/x-tex" id="S2.SS1.p1.6.m4.4c">w_{-}=|P|/(|P|+|N|)</annotation></semantics></math> with <math id="S2.SS1.p1.7.m5.1" class="ltx_Math" alttext="|P|" display="inline"><semantics id="S2.SS1.p1.7.m5.1a"><mrow id="S2.SS1.p1.7.m5.1.2.2" xref="S2.SS1.p1.7.m5.1.2.1.cmml"><mo stretchy="false" id="S2.SS1.p1.7.m5.1.2.2.1" xref="S2.SS1.p1.7.m5.1.2.1.1.cmml">|</mo><mi id="S2.SS1.p1.7.m5.1.1" xref="S2.SS1.p1.7.m5.1.1.cmml">P</mi><mo stretchy="false" id="S2.SS1.p1.7.m5.1.2.2.2" xref="S2.SS1.p1.7.m5.1.2.1.1.cmml">|</mo></mrow><annotation-xml encoding="MathML-Content" id="S2.SS1.p1.7.m5.1b"><apply id="S2.SS1.p1.7.m5.1.2.1.cmml" xref="S2.SS1.p1.7.m5.1.2.2"><abs id="S2.SS1.p1.7.m5.1.2.1.1.cmml" xref="S2.SS1.p1.7.m5.1.2.2.1"></abs><ci id="S2.SS1.p1.7.m5.1.1.cmml" xref="S2.SS1.p1.7.m5.1.1">𝑃</ci></apply></annotation-xml><annotation encoding="application/x-tex" id="S2.SS1.p1.7.m5.1c">|P|</annotation></semantics></math> and <math id="S2.SS1.p1.8.m6.1" class="ltx_Math" alttext="|N|" display="inline"><semantics id="S2.SS1.p1.8.m6.1a"><mrow id="S2.SS1.p1.8.m6.1.2.2" xref="S2.SS1.p1.8.m6.1.2.1.cmml"><mo stretchy="false" id="S2.SS1.p1.8.m6.1.2.2.1" xref="S2.SS1.p1.8.m6.1.2.1.1.cmml">|</mo><mi id="S2.SS1.p1.8.m6.1.1" xref="S2.SS1.p1.8.m6.1.1.cmml">N</mi><mo stretchy="false" id="S2.SS1.p1.8.m6.1.2.2.2" xref="S2.SS1.p1.8.m6.1.2.1.1.cmml">|</mo></mrow><annotation-xml encoding="MathML-Content" id="S2.SS1.p1.8.m6.1b"><apply id="S2.SS1.p1.8.m6.1.2.1.cmml" xref="S2.SS1.p1.8.m6.1.2.2"><abs id="S2.SS1.p1.8.m6.1.2.1.1.cmml" xref="S2.SS1.p1.8.m6.1.2.2.1"></abs><ci id="S2.SS1.p1.8.m6.1.1.cmml" xref="S2.SS1.p1.8.m6.1.1">𝑁</ci></apply></annotation-xml><annotation encoding="application/x-tex" id="S2.SS1.p1.8.m6.1c">|N|</annotation></semantics></math> the number of positive cases and negative cases of pneumonia in the training set respectively.</p>
+</div>
+</section>
+<section id="S2.SS2" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">2.2 </span>Model Architecture and Training</h3>
+
+<div id="S2.SS2.p1" class="ltx_para">
+<p id="S2.SS2.p1.1" class="ltx_p">CheXNet is a 121-layer Dense Convolutional
+Network (DenseNet) <cite class="ltx_cite ltx_citemacro_citep">(Huang et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib14" title="" class="ltx_ref">2016</a>)</cite> trained on the ChestX-ray 14 dataset. DenseNets improve flow of information and gradients through the network, making the optimization of very deep networks tractable. We replace the final fully connected layer with one that has a single output, after which we apply a sigmoid nonlinearity.</p>
+</div>
+<div id="S2.SS2.p2" class="ltx_para">
+<p id="S2.SS2.p2.4" class="ltx_p">The weights of the network are initialized with weights from a model pretrained on ImageNet <cite class="ltx_cite ltx_citemacro_citep">(Deng et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib7" title="" class="ltx_ref">2009</a>)</cite>. The network is trained end-to-end using Adam with standard parameters (<math id="S2.SS2.p2.1.m1.1" class="ltx_Math" alttext="\beta_{1}=0.9" display="inline"><semantics id="S2.SS2.p2.1.m1.1a"><mrow id="S2.SS2.p2.1.m1.1.1" xref="S2.SS2.p2.1.m1.1.1.cmml"><msub id="S2.SS2.p2.1.m1.1.1.2" xref="S2.SS2.p2.1.m1.1.1.2.cmml"><mi id="S2.SS2.p2.1.m1.1.1.2.2" xref="S2.SS2.p2.1.m1.1.1.2.2.cmml">β</mi><mn id="S2.SS2.p2.1.m1.1.1.2.3" xref="S2.SS2.p2.1.m1.1.1.2.3.cmml">1</mn></msub><mo id="S2.SS2.p2.1.m1.1.1.1" xref="S2.SS2.p2.1.m1.1.1.1.cmml">=</mo><mn id="S2.SS2.p2.1.m1.1.1.3" xref="S2.SS2.p2.1.m1.1.1.3.cmml">0.9</mn></mrow><annotation-xml encoding="MathML-Content" id="S2.SS2.p2.1.m1.1b"><apply id="S2.SS2.p2.1.m1.1.1.cmml" xref="S2.SS2.p2.1.m1.1.1"><eq id="S2.SS2.p2.1.m1.1.1.1.cmml" xref="S2.SS2.p2.1.m1.1.1.1"></eq><apply id="S2.SS2.p2.1.m1.1.1.2.cmml" xref="S2.SS2.p2.1.m1.1.1.2"><csymbol cd="ambiguous" id="S2.SS2.p2.1.m1.1.1.2.1.cmml" xref="S2.SS2.p2.1.m1.1.1.2">subscript</csymbol><ci id="S2.SS2.p2.1.m1.1.1.2.2.cmml" xref="S2.SS2.p2.1.m1.1.1.2.2">𝛽</ci><cn type="integer" id="S2.SS2.p2.1.m1.1.1.2.3.cmml" xref="S2.SS2.p2.1.m1.1.1.2.3">1</cn></apply><cn type="float" id="S2.SS2.p2.1.m1.1.1.3.cmml" xref="S2.SS2.p2.1.m1.1.1.3">0.9</cn></apply></annotation-xml><annotation encoding="application/x-tex" id="S2.SS2.p2.1.m1.1c">\beta_{1}=0.9</annotation></semantics></math> and <math id="S2.SS2.p2.2.m2.1" class="ltx_Math" alttext="\beta_{2}=0.999" display="inline"><semantics id="S2.SS2.p2.2.m2.1a"><mrow id="S2.SS2.p2.2.m2.1.1" xref="S2.SS2.p2.2.m2.1.1.cmml"><msub id="S2.SS2.p2.2.m2.1.1.2" xref="S2.SS2.p2.2.m2.1.1.2.cmml"><mi id="S2.SS2.p2.2.m2.1.1.2.2" xref="S2.SS2.p2.2.m2.1.1.2.2.cmml">β</mi><mn id="S2.SS2.p2.2.m2.1.1.2.3" xref="S2.SS2.p2.2.m2.1.1.2.3.cmml">2</mn></msub><mo id="S2.SS2.p2.2.m2.1.1.1" xref="S2.SS2.p2.2.m2.1.1.1.cmml">=</mo><mn id="S2.SS2.p2.2.m2.1.1.3" xref="S2.SS2.p2.2.m2.1.1.3.cmml">0.999</mn></mrow><annotation-xml encoding="MathML-Content" id="S2.SS2.p2.2.m2.1b"><apply id="S2.SS2.p2.2.m2.1.1.cmml" xref="S2.SS2.p2.2.m2.1.1"><eq id="S2.SS2.p2.2.m2.1.1.1.cmml" xref="S2.SS2.p2.2.m2.1.1.1"></eq><apply id="S2.SS2.p2.2.m2.1.1.2.cmml" xref="S2.SS2.p2.2.m2.1.1.2"><csymbol cd="ambiguous" id="S2.SS2.p2.2.m2.1.1.2.1.cmml" xref="S2.SS2.p2.2.m2.1.1.2">subscript</csymbol><ci id="S2.SS2.p2.2.m2.1.1.2.2.cmml" xref="S2.SS2.p2.2.m2.1.1.2.2">𝛽</ci><cn type="integer" id="S2.SS2.p2.2.m2.1.1.2.3.cmml" xref="S2.SS2.p2.2.m2.1.1.2.3">2</cn></apply><cn type="float" id="S2.SS2.p2.2.m2.1.1.3.cmml" xref="S2.SS2.p2.2.m2.1.1.3">0.999</cn></apply></annotation-xml><annotation encoding="application/x-tex" id="S2.SS2.p2.2.m2.1c">\beta_{2}=0.999</annotation></semantics></math>) <cite class="ltx_cite ltx_citemacro_citep">(Kingma &amp; Ba, <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib19" title="" class="ltx_ref">2014</a>)</cite>. We train the model using minibatches of size 16.
+We use an initial learning rate of <math id="S2.SS2.p2.3.m3.1" class="ltx_Math" alttext="0.001" display="inline"><semantics id="S2.SS2.p2.3.m3.1a"><mn id="S2.SS2.p2.3.m3.1.1" xref="S2.SS2.p2.3.m3.1.1.cmml">0.001</mn><annotation-xml encoding="MathML-Content" id="S2.SS2.p2.3.m3.1b"><cn type="float" id="S2.SS2.p2.3.m3.1.1.cmml" xref="S2.SS2.p2.3.m3.1.1">0.001</cn></annotation-xml><annotation encoding="application/x-tex" id="S2.SS2.p2.3.m3.1c">0.001</annotation></semantics></math> that is decayed by a factor of <math id="S2.SS2.p2.4.m4.1" class="ltx_Math" alttext="10" display="inline"><semantics id="S2.SS2.p2.4.m4.1a"><mn id="S2.SS2.p2.4.m4.1.1" xref="S2.SS2.p2.4.m4.1.1.cmml">10</mn><annotation-xml encoding="MathML-Content" id="S2.SS2.p2.4.m4.1b"><cn type="integer" id="S2.SS2.p2.4.m4.1.1.cmml" xref="S2.SS2.p2.4.m4.1.1">10</cn></annotation-xml><annotation encoding="application/x-tex" id="S2.SS2.p2.4.m4.1c">10</annotation></semantics></math> each time the validation loss plateaus after an epoch, and pick the model with the lowest validation loss.</p>
+</div>
+<figure id="S2.T2" class="ltx_table">
+<table id="S2.T2.4" class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr id="S2.T2.4.1.1" class="ltx_tr">
+<th id="S2.T2.4.1.1.1" class="ltx_td ltx_align_left ltx_th ltx_th_column ltx_th_row ltx_border_tt">Pathology</th>
+<th id="S2.T2.4.1.1.2" class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_tt">Wang et al. (2017)</th>
+<th id="S2.T2.4.1.1.3" class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_tt">Yao et al. (2017)</th>
+<th id="S2.T2.4.1.1.4" class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_tt">CheXNet (ours)</th>
+</tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr id="S2.T2.4.2.1" class="ltx_tr">
+<th id="S2.T2.4.2.1.1" class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_tt">Atelectasis</th>
+<td id="S2.T2.4.2.1.2" class="ltx_td ltx_align_center ltx_border_tt">0.716</td>
+<td id="S2.T2.4.2.1.3" class="ltx_td ltx_align_center ltx_border_tt">0.772</td>
+<td id="S2.T2.4.2.1.4" class="ltx_td ltx_align_center ltx_border_tt"><span id="S2.T2.4.2.1.4.1" class="ltx_text ltx_font_bold">0.8094</span></td>
+</tr>
+<tr id="S2.T2.4.3.2" class="ltx_tr">
+<th id="S2.T2.4.3.2.1" class="ltx_td ltx_align_left ltx_th ltx_th_row">Cardiomegaly</th>
+<td id="S2.T2.4.3.2.2" class="ltx_td ltx_align_center">0.807</td>
+<td id="S2.T2.4.3.2.3" class="ltx_td ltx_align_center">0.904</td>
+<td id="S2.T2.4.3.2.4" class="ltx_td ltx_align_center"><span id="S2.T2.4.3.2.4.1" class="ltx_text ltx_font_bold">0.9248</span></td>
+</tr>
+<tr id="S2.T2.4.4.3" class="ltx_tr">
+<th id="S2.T2.4.4.3.1" class="ltx_td ltx_align_left ltx_th ltx_th_row">Effusion</th>
+<td id="S2.T2.4.4.3.2" class="ltx_td ltx_align_center">0.784</td>
+<td id="S2.T2.4.4.3.3" class="ltx_td ltx_align_center">0.859</td>
+<td id="S2.T2.4.4.3.4" class="ltx_td ltx_align_center"><span id="S2.T2.4.4.3.4.1" class="ltx_text ltx_font_bold">0.8638</span></td>
+</tr>
+<tr id="S2.T2.4.5.4" class="ltx_tr">
+<th id="S2.T2.4.5.4.1" class="ltx_td ltx_align_left ltx_th ltx_th_row">Infiltration</th>
+<td id="S2.T2.4.5.4.2" class="ltx_td ltx_align_center">0.609</td>
+<td id="S2.T2.4.5.4.3" class="ltx_td ltx_align_center">0.695</td>
+<td id="S2.T2.4.5.4.4" class="ltx_td ltx_align_center"><span id="S2.T2.4.5.4.4.1" class="ltx_text ltx_font_bold">0.7345</span></td>
+</tr>
+<tr id="S2.T2.4.6.5" class="ltx_tr">
+<th id="S2.T2.4.6.5.1" class="ltx_td ltx_align_left ltx_th ltx_th_row">Mass</th>
+<td id="S2.T2.4.6.5.2" class="ltx_td ltx_align_center">0.706</td>
+<td id="S2.T2.4.6.5.3" class="ltx_td ltx_align_center">0.792</td>
+<td id="S2.T2.4.6.5.4" class="ltx_td ltx_align_center"><span id="S2.T2.4.6.5.4.1" class="ltx_text ltx_font_bold">0.8676</span></td>
+</tr>
+<tr id="S2.T2.4.7.6" class="ltx_tr">
+<th id="S2.T2.4.7.6.1" class="ltx_td ltx_align_left ltx_th ltx_th_row">Nodule</th>
+<td id="S2.T2.4.7.6.2" class="ltx_td ltx_align_center">0.671</td>
+<td id="S2.T2.4.7.6.3" class="ltx_td ltx_align_center">0.717</td>
+<td id="S2.T2.4.7.6.4" class="ltx_td ltx_align_center"><span id="S2.T2.4.7.6.4.1" class="ltx_text ltx_font_bold">0.7802</span></td>
+</tr>
+<tr id="S2.T2.4.8.7" class="ltx_tr">
+<th id="S2.T2.4.8.7.1" class="ltx_td ltx_align_left ltx_th ltx_th_row">Pneumonia</th>
+<td id="S2.T2.4.8.7.2" class="ltx_td ltx_align_center">0.633</td>
+<td id="S2.T2.4.8.7.3" class="ltx_td ltx_align_center">0.713</td>
+<td id="S2.T2.4.8.7.4" class="ltx_td ltx_align_center"><span id="S2.T2.4.8.7.4.1" class="ltx_text ltx_font_bold">0.7680</span></td>
+</tr>
+<tr id="S2.T2.4.9.8" class="ltx_tr">
+<th id="S2.T2.4.9.8.1" class="ltx_td ltx_align_left ltx_th ltx_th_row">Pneumothorax</th>
+<td id="S2.T2.4.9.8.2" class="ltx_td ltx_align_center">0.806</td>
+<td id="S2.T2.4.9.8.3" class="ltx_td ltx_align_center">0.841</td>
+<td id="S2.T2.4.9.8.4" class="ltx_td ltx_align_center"><span id="S2.T2.4.9.8.4.1" class="ltx_text ltx_font_bold">0.8887</span></td>
+</tr>
+<tr id="S2.T2.4.10.9" class="ltx_tr">
+<th id="S2.T2.4.10.9.1" class="ltx_td ltx_align_left ltx_th ltx_th_row">Consolidation</th>
+<td id="S2.T2.4.10.9.2" class="ltx_td ltx_align_center">0.708</td>
+<td id="S2.T2.4.10.9.3" class="ltx_td ltx_align_center">0.788</td>
+<td id="S2.T2.4.10.9.4" class="ltx_td ltx_align_center"><span id="S2.T2.4.10.9.4.1" class="ltx_text ltx_font_bold">0.7901</span></td>
+</tr>
+<tr id="S2.T2.4.11.10" class="ltx_tr">
+<th id="S2.T2.4.11.10.1" class="ltx_td ltx_align_left ltx_th ltx_th_row">Edema</th>
+<td id="S2.T2.4.11.10.2" class="ltx_td ltx_align_center">0.835</td>
+<td id="S2.T2.4.11.10.3" class="ltx_td ltx_align_center">0.882</td>
+<td id="S2.T2.4.11.10.4" class="ltx_td ltx_align_center"><span id="S2.T2.4.11.10.4.1" class="ltx_text ltx_font_bold">0.8878</span></td>
+</tr>
+<tr id="S2.T2.4.12.11" class="ltx_tr">
+<th id="S2.T2.4.12.11.1" class="ltx_td ltx_align_left ltx_th ltx_th_row">Emphysema</th>
+<td id="S2.T2.4.12.11.2" class="ltx_td ltx_align_center">0.815</td>
+<td id="S2.T2.4.12.11.3" class="ltx_td ltx_align_center">0.829</td>
+<td id="S2.T2.4.12.11.4" class="ltx_td ltx_align_center"><span id="S2.T2.4.12.11.4.1" class="ltx_text ltx_font_bold">0.9371</span></td>
+</tr>
+<tr id="S2.T2.4.13.12" class="ltx_tr">
+<th id="S2.T2.4.13.12.1" class="ltx_td ltx_align_left ltx_th ltx_th_row">Fibrosis</th>
+<td id="S2.T2.4.13.12.2" class="ltx_td ltx_align_center">0.769</td>
+<td id="S2.T2.4.13.12.3" class="ltx_td ltx_align_center">0.767</td>
+<td id="S2.T2.4.13.12.4" class="ltx_td ltx_align_center"><span id="S2.T2.4.13.12.4.1" class="ltx_text ltx_font_bold">0.8047</span></td>
+</tr>
+<tr id="S2.T2.4.14.13" class="ltx_tr">
+<th id="S2.T2.4.14.13.1" class="ltx_td ltx_align_left ltx_th ltx_th_row">Pleural Thickening</th>
+<td id="S2.T2.4.14.13.2" class="ltx_td ltx_align_center">0.708</td>
+<td id="S2.T2.4.14.13.3" class="ltx_td ltx_align_center">0.765</td>
+<td id="S2.T2.4.14.13.4" class="ltx_td ltx_align_center"><span id="S2.T2.4.14.13.4.1" class="ltx_text ltx_font_bold">0.8062</span></td>
+</tr>
+<tr id="S2.T2.4.15.14" class="ltx_tr">
+<th id="S2.T2.4.15.14.1" class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_bb">Hernia</th>
+<td id="S2.T2.4.15.14.2" class="ltx_td ltx_align_center ltx_border_bb">0.767</td>
+<td id="S2.T2.4.15.14.3" class="ltx_td ltx_align_center ltx_border_bb">0.914</td>
+<td id="S2.T2.4.15.14.4" class="ltx_td ltx_align_center ltx_border_bb"><span id="S2.T2.4.15.14.4.1" class="ltx_text ltx_font_bold">0.9164</span></td>
+</tr>
+</tbody>
+</table>
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_table"><span id="S2.T2.5.2.1" class="ltx_text" style="font-size:90%;">Table 2</span>: </span><span id="S2.T2.2.1" class="ltx_text" style="font-size:90%;">CheXNet outperforms the best published results on all 14 pathologies in the ChestX-ray14 dataset. In detecting Mass, Nodule, Pneumonia, and Emphysema, CheXNet has a margin of <math id="S2.T2.2.1.m1.1" class="ltx_Math" alttext="&gt;" display="inline"><semantics id="S2.T2.2.1.m1.1b"><mo id="S2.T2.2.1.m1.1.1" xref="S2.T2.2.1.m1.1.1.cmml">&gt;</mo><annotation-xml encoding="MathML-Content" id="S2.T2.2.1.m1.1c"><gt id="S2.T2.2.1.m1.1.1.cmml" xref="S2.T2.2.1.m1.1.1"></gt></annotation-xml><annotation encoding="application/x-tex" id="S2.T2.2.1.m1.1d">&gt;</annotation></semantics></math>0.05 AUROC over previous state of the art results.</span></figcaption>
+</figure>
+</section>
+</section>
+<section id="S3" class="ltx_section">
+<h2 class="ltx_title ltx_title_section">
+<span class="ltx_tag ltx_tag_section">3 </span>Data</h2>
+
+<section id="S3.SS1" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">3.1 </span>Training</h3>
+
+<div id="S3.SS1.p1" class="ltx_para">
+<p id="S3.SS1.p1.1" class="ltx_p">We use the ChestX-ray14 dataset released by <cite class="ltx_cite ltx_citemacro_citet">Wang et&nbsp;al. (<a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib26" title="" class="ltx_ref">2017</a>)</cite> which contains 112,120 frontal-view X-ray images of 30,805 unique patients. <cite class="ltx_cite ltx_citemacro_citet">Wang et&nbsp;al. (<a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib26" title="" class="ltx_ref">2017</a>)</cite> annotate each image with up to 14 different thoracic pathology labels using automatic extraction methods on radiology reports. We label images that have pneumonia as one of the annotated pathologies as positive examples and label all other images as negative examples. For the pneumonia detection task, we randomly split the dataset into training (28744 patients, 98637 images), validation (1672 patients, 6351 images), and test (389 patients,
+420 images). There is no patient overlap between the sets.</p>
+</div>
+<div id="S3.SS1.p2" class="ltx_para">
+<p id="S3.SS1.p2.1" class="ltx_p">Before inputting the images into the network, we downscale the images to <math id="S3.SS1.p2.1.m1.1" class="ltx_Math" alttext="224\times 224" display="inline"><semantics id="S3.SS1.p2.1.m1.1a"><mrow id="S3.SS1.p2.1.m1.1.1" xref="S3.SS1.p2.1.m1.1.1.cmml"><mn id="S3.SS1.p2.1.m1.1.1.2" xref="S3.SS1.p2.1.m1.1.1.2.cmml">224</mn><mo lspace="0.222em" rspace="0.222em" id="S3.SS1.p2.1.m1.1.1.1" xref="S3.SS1.p2.1.m1.1.1.1.cmml">×</mo><mn id="S3.SS1.p2.1.m1.1.1.3" xref="S3.SS1.p2.1.m1.1.1.3.cmml">224</mn></mrow><annotation-xml encoding="MathML-Content" id="S3.SS1.p2.1.m1.1b"><apply id="S3.SS1.p2.1.m1.1.1.cmml" xref="S3.SS1.p2.1.m1.1.1"><times id="S3.SS1.p2.1.m1.1.1.1.cmml" xref="S3.SS1.p2.1.m1.1.1.1"></times><cn type="integer" id="S3.SS1.p2.1.m1.1.1.2.cmml" xref="S3.SS1.p2.1.m1.1.1.2">224</cn><cn type="integer" id="S3.SS1.p2.1.m1.1.1.3.cmml" xref="S3.SS1.p2.1.m1.1.1.3">224</cn></apply></annotation-xml><annotation encoding="application/x-tex" id="S3.SS1.p2.1.m1.1c">224\times 224</annotation></semantics></math> and normalize based on the mean and standard deviation of images in the ImageNet training set. We also augment the training data with random horizontal flipping.</p>
+</div>
+</section>
+<section id="S3.SS2" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">3.2 </span>Test</h3>
+
+<div id="S3.SS2.p1" class="ltx_para">
+<p id="S3.SS2.p1.1" class="ltx_p">We collected a test set of 420 frontal chest X-rays. Annotations were obtained independently from four practicing radiologists at Stanford University, who were asked to label all 14 pathologies in <cite class="ltx_cite ltx_citemacro_citet">Wang et&nbsp;al. (<a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib26" title="" class="ltx_ref">2017</a>)</cite>. The radiologists had 4, 7, 25, and 28 years of experience, and one of the radiologists is a sub-specialty fellowship trained thoracic radiologist. Radiologists did not have access to any patient information or knowledge of disease prevalence in the data. Labels were entered into a standardized data entry program.</p>
+</div>
+<figure id="S3.F2" class="ltx_figure">
+<div class="ltx_flex_figure">
+<div class="ltx_flex_cell ltx_flex_size_3">
+<figure id="S3.F2.sf1" class="ltx_figure ltx_figure_panel ltx_align_center"><img src="./[1711.05225] Chest_files/00002846_013_classPneumonia_label1.jpg" id="S3.F2.sf1.g1" class="ltx_graphics ltx_img_square" width="568" height="568" alt="Refer to caption">
+<figcaption class="ltx_caption"><span class="ltx_tag ltx_tag_figure"><span id="S3.F2.sf1.2.1.1" class="ltx_text" style="font-size:90%;">(a)</span> </span><span id="S3.F2.sf1.3.2" class="ltx_text" style="font-size:90%;">Patient with multifocal community acquired pneumonia. The model correctly detects the airspace disease in the left lower and right upper lobes to arrive at the pneumonia diagnosis.</span></figcaption>
+</figure>
+</div>
+<div class="ltx_flex_cell ltx_flex_size_3">
+<figure id="S3.F2.sf2" class="ltx_figure ltx_figure_panel ltx_align_center"><img src="./[1711.05225] Chest_files/00019328_008_classNodule_label1.jpg" id="S3.F2.sf2.g1" class="ltx_graphics ltx_img_square" width="568" height="568" alt="Refer to caption">
+<figcaption class="ltx_caption"><span class="ltx_tag ltx_tag_figure"><span id="S3.F2.sf2.2.1.1" class="ltx_text" style="font-size:90%;">(b)</span> </span><span id="S3.F2.sf2.3.2" class="ltx_text" style="font-size:90%;">Patient with a left lung nodule. The model identifies the left lower lobe lung nodule and correctly classifies the pathology.</span></figcaption>
+</figure>
+</div>
+<div class="ltx_flex_cell ltx_flex_size_3">
+<figure id="S3.F2.sf3" class="ltx_figure ltx_figure_panel ltx_align_center"><img src="./[1711.05225] Chest_files/00006948_020_classMass_label1.jpg" id="S3.F2.sf3.g1" class="ltx_graphics ltx_img_square" width="568" height="568" alt="Refer to caption">
+<figcaption class="ltx_caption"><span class="ltx_tag ltx_tag_figure"><span id="S3.F2.sf3.2.1.1" class="ltx_text" style="font-size:90%;">(c)</span> </span><span id="S3.F2.sf3.3.2" class="ltx_text" style="font-size:90%;">Patient with primary lung malignancy and two large masses, one in the left lower lobe and one in the right upper lobe adjacent to the mediastinum. The model correctly identifies both masses in the X-ray.</span></figcaption>
+</figure>
+</div>
+<div class="ltx_flex_break"></div>
+<div class="ltx_flex_cell ltx_flex_size_3">
+<figure id="S3.F2.sf4" class="ltx_figure ltx_figure_panel ltx_align_center"><img src="./[1711.05225] Chest_files/00011460_037_classPneumothorax_label1.jpg" id="S3.F2.sf4.g1" class="ltx_graphics ltx_img_square" width="568" height="568" alt="Refer to caption">
+<figcaption class="ltx_caption"><span class="ltx_tag ltx_tag_figure"><span id="S3.F2.sf4.2.1.1" class="ltx_text" style="font-size:90%;">(d)</span> </span><span id="S3.F2.sf4.3.2" class="ltx_text" style="font-size:90%;">Patient with a right-sided pneumothroax and chest tube. The model detects the abnormal lung to correctly predict the presence of pneumothorax (collapsed lung).</span></figcaption>
+</figure>
+</div>
+<div class="ltx_flex_cell ltx_flex_size_3">
+<figure id="S3.F2.sf5" class="ltx_figure ltx_figure_panel ltx_align_center"><img src="./[1711.05225] Chest_files/00014813_000_classEffusion_label1.jpg" id="S3.F2.sf5.g1" class="ltx_graphics ltx_img_square" width="568" height="568" alt="Refer to caption">
+<figcaption class="ltx_caption"><span class="ltx_tag ltx_tag_figure"><span id="S3.F2.sf5.2.1.1" class="ltx_text" style="font-size:90%;">(e)</span> </span><span id="S3.F2.sf5.3.2" class="ltx_text" style="font-size:90%;">Patient with a large right pleural effusion (fluid in the pleural space). The model correctly labels the effusion and focuses on the right lower chest. </span></figcaption>
+</figure>
+</div>
+<div class="ltx_flex_cell ltx_flex_size_3">
+<figure id="S3.F2.sf6" class="ltx_figure ltx_figure_panel ltx_align_center"><img src="./[1711.05225] Chest_files/00015520_007_classCardiomegaly_label1.jpg" id="S3.F2.sf6.g1" class="ltx_graphics ltx_centering ltx_img_square" width="568" height="568" alt="Refer to caption">
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_figure"><span id="S3.F2.sf6.2.1.1" class="ltx_text" style="font-size:90%;">(f)</span> </span><span id="S3.F2.sf6.3.2" class="ltx_text" style="font-size:90%;">Patient with congestive heart failure and cardiomegaly (enlarged heart). The model correctly identifies the enlarged cardiac silhouette. </span></figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_figure"><span id="S3.F2.2.1.1" class="ltx_text" style="font-size:90%;">Figure 2</span>: </span><span id="S3.F2.3.2" class="ltx_text" style="font-size:90%;">CheXNet localizes pathologies it identifies using Class Activation Maps, which highlight the areas of the X-ray that are most important for making a particular pathology classification. The captions for each image are provided by one of the practicing radiologists.</span></figcaption>
+</figure>
+</section>
+</section>
+<section id="S4" class="ltx_section">
+<h2 class="ltx_title ltx_title_section">
+<span class="ltx_tag ltx_tag_section">4 </span>CheXNet vs. Radiologist Performance</h2>
+
+<section id="S4.SS1" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">4.1 </span>Comparison</h3>
+
+<div id="S4.SS1.p1" class="ltx_para">
+<p id="S4.SS1.p1.1" class="ltx_p">We assess the performance of both radiologists and CheXNet on the test set for the pneumonia detection task. Recall that for each of the images in the test set, we have 4 labels from four practicing radiologists and 1 label from CheXNet. We compute the F1 score for each individual radiologist and for CheXNet against each of the other 4 labels as ground truth. We report the mean of the 4 resulting F1 scores for each radiologist and for CheXNet, along with the average F1 across the radiologists. We use the bootstrap to construct 95% bootstrap confidence intervals (CIs), calculating the average F1 score for both the radiologists and CheXNet on 10,000 bootstrap samples, sampled with replacement from the test set. We take the 2.5th and 97.5th percentiles of the F1 scores as the 95% bootstrap CI. We find that CheXNet achieves an F1 score of 0.435 (95% CI 0.387, 0.481), higher than the radiologist average of 0.387 (95% CI 0.330, 0.442). Table <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#S1.T1" title="Table 1 ‣ 1 Introduction ‣ Chest" class="ltx_ref"><span class="ltx_text ltx_ref_tag">1</span></a> summarizes the performance of each radiologist and of CheXNet.</p>
+</div>
+<div id="S4.SS1.p2" class="ltx_para">
+<p id="S4.SS1.p2.1" class="ltx_p">To determine whether CheXNet’s performance is statistically significantly higher than radiologist performance, we also calculate the difference between the average F1 score of CheXNet and the average F1 score of the radiologists on the same bootstrap samples. If the 95% CI on the difference does not include zero, we conclude there was a significant difference between the F1 score of CheXNet and the F1 score of the radiologists. We find that the difference in F1 scores — 0.051 (95% CI 0.005, 0.084) — does not contain 0, and therefore conclude that the performance of CheXNet is statistically significantly higher than radiologist performance.</p>
+</div>
+</section>
+<section id="S4.SS2" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">4.2 </span>Limitations</h3>
+
+<div id="S4.SS2.p1" class="ltx_para">
+<p id="S4.SS2.p1.1" class="ltx_p">We identify three limitations of this comparison. First, only frontal radiographs were presented to the radiologists and model during diagnosis, but it has been shown that up to 15% of accurate diagnoses require the lateral view <cite class="ltx_cite ltx_citemacro_citep">(Raoof et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib25" title="" class="ltx_ref">2012</a>)</cite>; we thus expect that this setup provides a conservative estimate of performance. Third, neither the model nor the radiologists were not permitted to use patient history, which has been shown to decrease radiologist diagnostic performance in interpreting chest radiographs <cite class="ltx_cite ltx_citemacro_citep">(Berbaum et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib2" title="" class="ltx_ref">1985</a>; Potchen et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib23" title="" class="ltx_ref">1979</a>)</cite>; for example, given a pulmonary abnormality with a history of fever and cough, pneumonia would be appropriate rather than less specific terms such as infiltration or consolidation) <cite class="ltx_cite ltx_citemacro_citep">(Potchen et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib23" title="" class="ltx_ref">1979</a>)</cite>.
+
+</p>
+</div>
+</section>
+</section>
+<section id="S5" class="ltx_section">
+<h2 class="ltx_title ltx_title_section">
+<span class="ltx_tag ltx_tag_section">5 </span>ChexNet vs. Previous State of the Art on the ChestX-ray14 Dataset</h2>
+
+<div id="S5.p1" class="ltx_para">
+<p id="S5.p1.1" class="ltx_p">We extend the algorithm to classify multiple thoracic pathologies by making three changes.
+First, instead of outputting one binary label, ChexNet outputs a vector <math id="S5.p1.1.m1.1" class="ltx_Math" alttext="t" display="inline"><semantics id="S5.p1.1.m1.1a"><mi id="S5.p1.1.m1.1.1" xref="S5.p1.1.m1.1.1.cmml">t</mi><annotation-xml encoding="MathML-Content" id="S5.p1.1.m1.1b"><ci id="S5.p1.1.m1.1.1.cmml" xref="S5.p1.1.m1.1.1">𝑡</ci></annotation-xml><annotation encoding="application/x-tex" id="S5.p1.1.m1.1c">t</annotation></semantics></math> of binary labels indicating the absence or presence of each of the following 14 pathology classes: Atelectasis, Cardiomegaly, Consolidation, Edema, Effusion, Emphysema, Fibrosis, Hernia, Infiltration, Mass, Nodule, Pleural Thickening, Pneumonia, and Pneumothorax.
+Second, we replace the final fully connected layer in CheXNet with a fully connected layer producing a 14-dimensional output, after which we apply an elementwise sigmoid nonlinearity. The final output is the predicted probability of the presence of each pathology class. Third, we modify the loss function to optimize the sum of unweighted binary cross entropy losses</p>
+</div>
+<div id="S5.p2" class="ltx_para">
+<table id="S9.EGx2" class="ltx_equationgroup ltx_eqn_eqnarray ltx_eqn_table">
+
+<tbody id="S5.Ex4">
+<tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_align_right ltx_eqn_cell"><math id="S5.Ex3.m1.2" class="ltx_Math" alttext="\displaystyle L(X,y)" display="inline"><semantics id="S5.Ex3.m1.2a"><mrow id="S5.Ex3.m1.2.3" xref="S5.Ex3.m1.2.3.cmml"><mi id="S5.Ex3.m1.2.3.2" xref="S5.Ex3.m1.2.3.2.cmml">L</mi><mo lspace="0em" rspace="0em" id="S5.Ex3.m1.2.3.1" xref="S5.Ex3.m1.2.3.1.cmml">​</mo><mrow id="S5.Ex3.m1.2.3.3.2" xref="S5.Ex3.m1.2.3.3.1.cmml"><mo stretchy="false" id="S5.Ex3.m1.2.3.3.2.1" xref="S5.Ex3.m1.2.3.3.1.cmml">(</mo><mi id="S5.Ex3.m1.1.1" xref="S5.Ex3.m1.1.1.cmml">X</mi><mo id="S5.Ex3.m1.2.3.3.2.2" xref="S5.Ex3.m1.2.3.3.1.cmml">,</mo><mi id="S5.Ex3.m1.2.2" xref="S5.Ex3.m1.2.2.cmml">y</mi><mo stretchy="false" id="S5.Ex3.m1.2.3.3.2.3" xref="S5.Ex3.m1.2.3.3.1.cmml">)</mo></mrow></mrow><annotation-xml encoding="MathML-Content" id="S5.Ex3.m1.2b"><apply id="S5.Ex3.m1.2.3.cmml" xref="S5.Ex3.m1.2.3"><times id="S5.Ex3.m1.2.3.1.cmml" xref="S5.Ex3.m1.2.3.1"></times><ci id="S5.Ex3.m1.2.3.2.cmml" xref="S5.Ex3.m1.2.3.2">𝐿</ci><interval closure="open" id="S5.Ex3.m1.2.3.3.1.cmml" xref="S5.Ex3.m1.2.3.3.2"><ci id="S5.Ex3.m1.1.1.cmml" xref="S5.Ex3.m1.1.1">𝑋</ci><ci id="S5.Ex3.m1.2.2.cmml" xref="S5.Ex3.m1.2.2">𝑦</ci></interval></apply></annotation-xml><annotation encoding="application/x-tex" id="S5.Ex3.m1.2c">\displaystyle L(X,y)</annotation></semantics></math></td>
+<td class="ltx_td ltx_align_center ltx_eqn_cell"><math id="S5.Ex3.m2.1" class="ltx_Math" alttext="\displaystyle=" display="inline"><semantics id="S5.Ex3.m2.1a"><mo id="S5.Ex3.m2.1.1" xref="S5.Ex3.m2.1.1.cmml">=</mo><annotation-xml encoding="MathML-Content" id="S5.Ex3.m2.1b"><eq id="S5.Ex3.m2.1.1.cmml" xref="S5.Ex3.m2.1.1"></eq></annotation-xml><annotation encoding="application/x-tex" id="S5.Ex3.m2.1c">\displaystyle=</annotation></semantics></math></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><math id="S5.Ex3.m3.1" class="ltx_math_unparsed" alttext="\displaystyle\sum_{c=1}^{14}[-y_{c}\log p(Y_{c}=1|X)" display="inline"><semantics id="S5.Ex3.m3.1a"><mrow id="S5.Ex3.m3.1b"><mstyle displaystyle="true" id="S5.Ex3.m3.1.1"><munderover id="S5.Ex3.m3.1.1a"><mo movablelimits="false" id="S5.Ex3.m3.1.1.2.2">∑</mo><mrow id="S5.Ex3.m3.1.1.2.3"><mi id="S5.Ex3.m3.1.1.2.3.2">c</mi><mo id="S5.Ex3.m3.1.1.2.3.1">=</mo><mn id="S5.Ex3.m3.1.1.2.3.3">1</mn></mrow><mn id="S5.Ex3.m3.1.1.3">14</mn></munderover></mstyle><mrow id="S5.Ex3.m3.1.2"><mo stretchy="false" id="S5.Ex3.m3.1.2.1">[</mo><mo lspace="0em" id="S5.Ex3.m3.1.2.2">−</mo><msub id="S5.Ex3.m3.1.2.3"><mi id="S5.Ex3.m3.1.2.3.2">y</mi><mi id="S5.Ex3.m3.1.2.3.3">c</mi></msub><mi id="S5.Ex3.m3.1.2.4">log</mi><mi id="S5.Ex3.m3.1.2.5">p</mi><mrow id="S5.Ex3.m3.1.2.6"><mo stretchy="false" id="S5.Ex3.m3.1.2.6.1">(</mo><msub id="S5.Ex3.m3.1.2.6.2"><mi id="S5.Ex3.m3.1.2.6.2.2">Y</mi><mi id="S5.Ex3.m3.1.2.6.2.3">c</mi></msub><mo id="S5.Ex3.m3.1.2.6.3">=</mo><mn id="S5.Ex3.m3.1.2.6.4">1</mn><mo fence="false" rspace="0.167em" stretchy="false" id="S5.Ex3.m3.1.2.6.5">|</mo><mi id="S5.Ex3.m3.1.2.6.6">X</mi><mo stretchy="false" id="S5.Ex3.m3.1.2.6.7">)</mo></mrow></mrow></mrow><annotation encoding="application/x-tex" id="S5.Ex3.m3.1c">\displaystyle\sum_{c=1}^{14}[-y_{c}\log p(Y_{c}=1|X)</annotation></semantics></math></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+</tr>
+<tr class="ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_eqn_cell"></td>
+<td class="ltx_td ltx_align_left ltx_eqn_cell"><math id="S5.Ex4.m1.1" class="ltx_math_unparsed" alttext="\displaystyle\hskip 16.99998pt-(1-y_{c})\log p(Y_{c}=0|X)]," display="inline"><semantics id="S5.Ex4.m1.1a"><mrow id="S5.Ex4.m1.1b"><mo id="S5.Ex4.m1.1.1">−</mo><mrow id="S5.Ex4.m1.1.2"><mo stretchy="false" id="S5.Ex4.m1.1.2.1">(</mo><mn id="S5.Ex4.m1.1.2.2">1</mn><mo id="S5.Ex4.m1.1.2.3">−</mo><msub id="S5.Ex4.m1.1.2.4"><mi id="S5.Ex4.m1.1.2.4.2">y</mi><mi id="S5.Ex4.m1.1.2.4.3">c</mi></msub><mo rspace="0.167em" stretchy="false" id="S5.Ex4.m1.1.2.5">)</mo></mrow><mi id="S5.Ex4.m1.1.3">log</mi><mi id="S5.Ex4.m1.1.4">p</mi><mrow id="S5.Ex4.m1.1.5"><mo stretchy="false" id="S5.Ex4.m1.1.5.1">(</mo><msub id="S5.Ex4.m1.1.5.2"><mi id="S5.Ex4.m1.1.5.2.2">Y</mi><mi id="S5.Ex4.m1.1.5.2.3">c</mi></msub><mo id="S5.Ex4.m1.1.5.3">=</mo><mn id="S5.Ex4.m1.1.5.4">0</mn><mo fence="false" rspace="0.167em" stretchy="false" id="S5.Ex4.m1.1.5.5">|</mo><mi id="S5.Ex4.m1.1.5.6">X</mi><mo stretchy="false" id="S5.Ex4.m1.1.5.7">)</mo></mrow><mo stretchy="false" id="S5.Ex4.m1.1.6">]</mo><mo id="S5.Ex4.m1.1.7">,</mo></mrow><annotation encoding="application/x-tex" id="S5.Ex4.m1.1c">\displaystyle\hskip 16.99998pt-(1-y_{c})\log p(Y_{c}=0|X)],</annotation></semantics></math></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="S5.p3" class="ltx_para">
+<p id="S5.p3.4" class="ltx_p">where <math id="S5.p3.1.m1.1" class="ltx_Math" alttext="p(Y_{c}=1|X)" display="inline"><semantics id="S5.p3.1.m1.1a"><mrow id="S5.p3.1.m1.1.1" xref="S5.p3.1.m1.1.1.cmml"><mi id="S5.p3.1.m1.1.1.3" xref="S5.p3.1.m1.1.1.3.cmml">p</mi><mo lspace="0em" rspace="0em" id="S5.p3.1.m1.1.1.2" xref="S5.p3.1.m1.1.1.2.cmml">​</mo><mrow id="S5.p3.1.m1.1.1.1.1" xref="S5.p3.1.m1.1.1.1.1.1.cmml"><mo stretchy="false" id="S5.p3.1.m1.1.1.1.1.2" xref="S5.p3.1.m1.1.1.1.1.1.cmml">(</mo><mrow id="S5.p3.1.m1.1.1.1.1.1" xref="S5.p3.1.m1.1.1.1.1.1.cmml"><msub id="S5.p3.1.m1.1.1.1.1.1.2" xref="S5.p3.1.m1.1.1.1.1.1.2.cmml"><mi id="S5.p3.1.m1.1.1.1.1.1.2.2" xref="S5.p3.1.m1.1.1.1.1.1.2.2.cmml">Y</mi><mi id="S5.p3.1.m1.1.1.1.1.1.2.3" xref="S5.p3.1.m1.1.1.1.1.1.2.3.cmml">c</mi></msub><mo id="S5.p3.1.m1.1.1.1.1.1.1" xref="S5.p3.1.m1.1.1.1.1.1.1.cmml">=</mo><mrow id="S5.p3.1.m1.1.1.1.1.1.3" xref="S5.p3.1.m1.1.1.1.1.1.3.cmml"><mn id="S5.p3.1.m1.1.1.1.1.1.3.2" xref="S5.p3.1.m1.1.1.1.1.1.3.2.cmml">1</mn><mo fence="false" id="S5.p3.1.m1.1.1.1.1.1.3.1" xref="S5.p3.1.m1.1.1.1.1.1.3.1.cmml">|</mo><mi id="S5.p3.1.m1.1.1.1.1.1.3.3" xref="S5.p3.1.m1.1.1.1.1.1.3.3.cmml">X</mi></mrow></mrow><mo stretchy="false" id="S5.p3.1.m1.1.1.1.1.3" xref="S5.p3.1.m1.1.1.1.1.1.cmml">)</mo></mrow></mrow><annotation-xml encoding="MathML-Content" id="S5.p3.1.m1.1b"><apply id="S5.p3.1.m1.1.1.cmml" xref="S5.p3.1.m1.1.1"><times id="S5.p3.1.m1.1.1.2.cmml" xref="S5.p3.1.m1.1.1.2"></times><ci id="S5.p3.1.m1.1.1.3.cmml" xref="S5.p3.1.m1.1.1.3">𝑝</ci><apply id="S5.p3.1.m1.1.1.1.1.1.cmml" xref="S5.p3.1.m1.1.1.1.1"><eq id="S5.p3.1.m1.1.1.1.1.1.1.cmml" xref="S5.p3.1.m1.1.1.1.1.1.1"></eq><apply id="S5.p3.1.m1.1.1.1.1.1.2.cmml" xref="S5.p3.1.m1.1.1.1.1.1.2"><csymbol cd="ambiguous" id="S5.p3.1.m1.1.1.1.1.1.2.1.cmml" xref="S5.p3.1.m1.1.1.1.1.1.2">subscript</csymbol><ci id="S5.p3.1.m1.1.1.1.1.1.2.2.cmml" xref="S5.p3.1.m1.1.1.1.1.1.2.2">𝑌</ci><ci id="S5.p3.1.m1.1.1.1.1.1.2.3.cmml" xref="S5.p3.1.m1.1.1.1.1.1.2.3">𝑐</ci></apply><apply id="S5.p3.1.m1.1.1.1.1.1.3.cmml" xref="S5.p3.1.m1.1.1.1.1.1.3"><csymbol cd="latexml" id="S5.p3.1.m1.1.1.1.1.1.3.1.cmml" xref="S5.p3.1.m1.1.1.1.1.1.3.1">conditional</csymbol><cn type="integer" id="S5.p3.1.m1.1.1.1.1.1.3.2.cmml" xref="S5.p3.1.m1.1.1.1.1.1.3.2">1</cn><ci id="S5.p3.1.m1.1.1.1.1.1.3.3.cmml" xref="S5.p3.1.m1.1.1.1.1.1.3.3">𝑋</ci></apply></apply></apply></annotation-xml><annotation encoding="application/x-tex" id="S5.p3.1.m1.1c">p(Y_{c}=1|X)</annotation></semantics></math> is the predicted probability that the image contains the pathology <math id="S5.p3.2.m2.1" class="ltx_Math" alttext="c" display="inline"><semantics id="S5.p3.2.m2.1a"><mi id="S5.p3.2.m2.1.1" xref="S5.p3.2.m2.1.1.cmml">c</mi><annotation-xml encoding="MathML-Content" id="S5.p3.2.m2.1b"><ci id="S5.p3.2.m2.1.1.cmml" xref="S5.p3.2.m2.1.1">𝑐</ci></annotation-xml><annotation encoding="application/x-tex" id="S5.p3.2.m2.1c">c</annotation></semantics></math> and <math id="S5.p3.3.m3.1" class="ltx_Math" alttext="p(Y_{c}=0|X)" display="inline"><semantics id="S5.p3.3.m3.1a"><mrow id="S5.p3.3.m3.1.1" xref="S5.p3.3.m3.1.1.cmml"><mi id="S5.p3.3.m3.1.1.3" xref="S5.p3.3.m3.1.1.3.cmml">p</mi><mo lspace="0em" rspace="0em" id="S5.p3.3.m3.1.1.2" xref="S5.p3.3.m3.1.1.2.cmml">​</mo><mrow id="S5.p3.3.m3.1.1.1.1" xref="S5.p3.3.m3.1.1.1.1.1.cmml"><mo stretchy="false" id="S5.p3.3.m3.1.1.1.1.2" xref="S5.p3.3.m3.1.1.1.1.1.cmml">(</mo><mrow id="S5.p3.3.m3.1.1.1.1.1" xref="S5.p3.3.m3.1.1.1.1.1.cmml"><msub id="S5.p3.3.m3.1.1.1.1.1.2" xref="S5.p3.3.m3.1.1.1.1.1.2.cmml"><mi id="S5.p3.3.m3.1.1.1.1.1.2.2" xref="S5.p3.3.m3.1.1.1.1.1.2.2.cmml">Y</mi><mi id="S5.p3.3.m3.1.1.1.1.1.2.3" xref="S5.p3.3.m3.1.1.1.1.1.2.3.cmml">c</mi></msub><mo id="S5.p3.3.m3.1.1.1.1.1.1" xref="S5.p3.3.m3.1.1.1.1.1.1.cmml">=</mo><mrow id="S5.p3.3.m3.1.1.1.1.1.3" xref="S5.p3.3.m3.1.1.1.1.1.3.cmml"><mn id="S5.p3.3.m3.1.1.1.1.1.3.2" xref="S5.p3.3.m3.1.1.1.1.1.3.2.cmml">0</mn><mo fence="false" id="S5.p3.3.m3.1.1.1.1.1.3.1" xref="S5.p3.3.m3.1.1.1.1.1.3.1.cmml">|</mo><mi id="S5.p3.3.m3.1.1.1.1.1.3.3" xref="S5.p3.3.m3.1.1.1.1.1.3.3.cmml">X</mi></mrow></mrow><mo stretchy="false" id="S5.p3.3.m3.1.1.1.1.3" xref="S5.p3.3.m3.1.1.1.1.1.cmml">)</mo></mrow></mrow><annotation-xml encoding="MathML-Content" id="S5.p3.3.m3.1b"><apply id="S5.p3.3.m3.1.1.cmml" xref="S5.p3.3.m3.1.1"><times id="S5.p3.3.m3.1.1.2.cmml" xref="S5.p3.3.m3.1.1.2"></times><ci id="S5.p3.3.m3.1.1.3.cmml" xref="S5.p3.3.m3.1.1.3">𝑝</ci><apply id="S5.p3.3.m3.1.1.1.1.1.cmml" xref="S5.p3.3.m3.1.1.1.1"><eq id="S5.p3.3.m3.1.1.1.1.1.1.cmml" xref="S5.p3.3.m3.1.1.1.1.1.1"></eq><apply id="S5.p3.3.m3.1.1.1.1.1.2.cmml" xref="S5.p3.3.m3.1.1.1.1.1.2"><csymbol cd="ambiguous" id="S5.p3.3.m3.1.1.1.1.1.2.1.cmml" xref="S5.p3.3.m3.1.1.1.1.1.2">subscript</csymbol><ci id="S5.p3.3.m3.1.1.1.1.1.2.2.cmml" xref="S5.p3.3.m3.1.1.1.1.1.2.2">𝑌</ci><ci id="S5.p3.3.m3.1.1.1.1.1.2.3.cmml" xref="S5.p3.3.m3.1.1.1.1.1.2.3">𝑐</ci></apply><apply id="S5.p3.3.m3.1.1.1.1.1.3.cmml" xref="S5.p3.3.m3.1.1.1.1.1.3"><csymbol cd="latexml" id="S5.p3.3.m3.1.1.1.1.1.3.1.cmml" xref="S5.p3.3.m3.1.1.1.1.1.3.1">conditional</csymbol><cn type="integer" id="S5.p3.3.m3.1.1.1.1.1.3.2.cmml" xref="S5.p3.3.m3.1.1.1.1.1.3.2">0</cn><ci id="S5.p3.3.m3.1.1.1.1.1.3.3.cmml" xref="S5.p3.3.m3.1.1.1.1.1.3.3">𝑋</ci></apply></apply></apply></annotation-xml><annotation encoding="application/x-tex" id="S5.p3.3.m3.1c">p(Y_{c}=0|X)</annotation></semantics></math> is the predicted probability that the image does not contain the pathology <math id="S5.p3.4.m4.1" class="ltx_Math" alttext="c" display="inline"><semantics id="S5.p3.4.m4.1a"><mi id="S5.p3.4.m4.1.1" xref="S5.p3.4.m4.1.1.cmml">c</mi><annotation-xml encoding="MathML-Content" id="S5.p3.4.m4.1b"><ci id="S5.p3.4.m4.1.1.cmml" xref="S5.p3.4.m4.1.1">𝑐</ci></annotation-xml><annotation encoding="application/x-tex" id="S5.p3.4.m4.1c">c</annotation></semantics></math>.</p>
+</div>
+<div id="S5.p4" class="ltx_para">
+<p id="S5.p4.1" class="ltx_p">We randomly split the dataset into training (70%), validation (10%), and test (20%) sets, following previous work on ChestX-ray14 <cite class="ltx_cite ltx_citemacro_citep">(Wang et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib26" title="" class="ltx_ref">2017</a>; Yao et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib28" title="" class="ltx_ref">2017</a>)</cite>. We ensure that there is no patient overlap between the splits. We compare the per-class AUROC of the model against the previous state of the art held by <cite class="ltx_cite ltx_citemacro_citet">Yao et&nbsp;al. (<a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib28" title="" class="ltx_ref">2017</a>)</cite> on 13 classes and <cite class="ltx_cite ltx_citemacro_citet">Wang et&nbsp;al. (<a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib26" title="" class="ltx_ref">2017</a>)</cite> on the remaining 1 class.</p>
+</div>
+<div id="S5.p5" class="ltx_para">
+<p id="S5.p5.1" class="ltx_p">We find that CheXNet achieves state of the art results on all 14 pathology classes. Table&nbsp;<a href="https://ar5iv.labs.arxiv.org/html/1711.05225#S2.T2" title="Table 2 ‣ 2.2 Model Architecture and Training ‣ 2 CheXNet ‣ Chest" class="ltx_ref"><span class="ltx_text ltx_ref_tag">2</span></a> illustrates the per-class AUROC comparison on the test set. On Mass, Nodule, Pneumonia, and Emphysema, we outperform previous state of the art considerably (<math id="S5.p5.1.m1.1" class="ltx_Math" alttext="&gt;0.05" display="inline"><semantics id="S5.p5.1.m1.1a"><mrow id="S5.p5.1.m1.1.1" xref="S5.p5.1.m1.1.1.cmml"><mi id="S5.p5.1.m1.1.1.2" xref="S5.p5.1.m1.1.1.2.cmml"></mi><mo id="S5.p5.1.m1.1.1.1" xref="S5.p5.1.m1.1.1.1.cmml">&gt;</mo><mn id="S5.p5.1.m1.1.1.3" xref="S5.p5.1.m1.1.1.3.cmml">0.05</mn></mrow><annotation-xml encoding="MathML-Content" id="S5.p5.1.m1.1b"><apply id="S5.p5.1.m1.1.1.cmml" xref="S5.p5.1.m1.1.1"><gt id="S5.p5.1.m1.1.1.1.cmml" xref="S5.p5.1.m1.1.1.1"></gt><csymbol cd="latexml" id="S5.p5.1.m1.1.1.2.cmml" xref="S5.p5.1.m1.1.1.2">absent</csymbol><cn type="float" id="S5.p5.1.m1.1.1.3.cmml" xref="S5.p5.1.m1.1.1.3">0.05</cn></apply></annotation-xml><annotation encoding="application/x-tex" id="S5.p5.1.m1.1c">&gt;0.05</annotation></semantics></math> increase in AUROC).</p>
+</div>
+</section>
+<section id="S6" class="ltx_section">
+<h2 class="ltx_title ltx_title_section">
+<span class="ltx_tag ltx_tag_section">6 </span>Model Interpretation</h2>
+
+<div id="S6.p1" class="ltx_para">
+<p id="S6.p1.7" class="ltx_p">To interpret the network predictions, we also produce heatmaps to visualize the areas of the image most indicative of the disease using class activation mappings (CAMs) <cite class="ltx_cite ltx_citemacro_citep">(Zhou et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib29" title="" class="ltx_ref">2016</a>)</cite>. To generate the CAMs, we feed an image into the fully trained network and extract the feature maps that are output by the final convolutional layer. Let <math id="S6.p1.1.m1.1" class="ltx_Math" alttext="f_{k}" display="inline"><semantics id="S6.p1.1.m1.1a"><msub id="S6.p1.1.m1.1.1" xref="S6.p1.1.m1.1.1.cmml"><mi id="S6.p1.1.m1.1.1.2" xref="S6.p1.1.m1.1.1.2.cmml">f</mi><mi id="S6.p1.1.m1.1.1.3" xref="S6.p1.1.m1.1.1.3.cmml">k</mi></msub><annotation-xml encoding="MathML-Content" id="S6.p1.1.m1.1b"><apply id="S6.p1.1.m1.1.1.cmml" xref="S6.p1.1.m1.1.1"><csymbol cd="ambiguous" id="S6.p1.1.m1.1.1.1.cmml" xref="S6.p1.1.m1.1.1">subscript</csymbol><ci id="S6.p1.1.m1.1.1.2.cmml" xref="S6.p1.1.m1.1.1.2">𝑓</ci><ci id="S6.p1.1.m1.1.1.3.cmml" xref="S6.p1.1.m1.1.1.3">𝑘</ci></apply></annotation-xml><annotation encoding="application/x-tex" id="S6.p1.1.m1.1c">f_{k}</annotation></semantics></math> be the <math id="S6.p1.2.m2.1" class="ltx_Math" alttext="k" display="inline"><semantics id="S6.p1.2.m2.1a"><mi id="S6.p1.2.m2.1.1" xref="S6.p1.2.m2.1.1.cmml">k</mi><annotation-xml encoding="MathML-Content" id="S6.p1.2.m2.1b"><ci id="S6.p1.2.m2.1.1.cmml" xref="S6.p1.2.m2.1.1">𝑘</ci></annotation-xml><annotation encoding="application/x-tex" id="S6.p1.2.m2.1c">k</annotation></semantics></math>th feature map and let <math id="S6.p1.3.m3.2" class="ltx_Math" alttext="w_{c,k}" display="inline"><semantics id="S6.p1.3.m3.2a"><msub id="S6.p1.3.m3.2.3" xref="S6.p1.3.m3.2.3.cmml"><mi id="S6.p1.3.m3.2.3.2" xref="S6.p1.3.m3.2.3.2.cmml">w</mi><mrow id="S6.p1.3.m3.2.2.2.4" xref="S6.p1.3.m3.2.2.2.3.cmml"><mi id="S6.p1.3.m3.1.1.1.1" xref="S6.p1.3.m3.1.1.1.1.cmml">c</mi><mo id="S6.p1.3.m3.2.2.2.4.1" xref="S6.p1.3.m3.2.2.2.3.cmml">,</mo><mi id="S6.p1.3.m3.2.2.2.2" xref="S6.p1.3.m3.2.2.2.2.cmml">k</mi></mrow></msub><annotation-xml encoding="MathML-Content" id="S6.p1.3.m3.2b"><apply id="S6.p1.3.m3.2.3.cmml" xref="S6.p1.3.m3.2.3"><csymbol cd="ambiguous" id="S6.p1.3.m3.2.3.1.cmml" xref="S6.p1.3.m3.2.3">subscript</csymbol><ci id="S6.p1.3.m3.2.3.2.cmml" xref="S6.p1.3.m3.2.3.2">𝑤</ci><list id="S6.p1.3.m3.2.2.2.3.cmml" xref="S6.p1.3.m3.2.2.2.4"><ci id="S6.p1.3.m3.1.1.1.1.cmml" xref="S6.p1.3.m3.1.1.1.1">𝑐</ci><ci id="S6.p1.3.m3.2.2.2.2.cmml" xref="S6.p1.3.m3.2.2.2.2">𝑘</ci></list></apply></annotation-xml><annotation encoding="application/x-tex" id="S6.p1.3.m3.2c">w_{c,k}</annotation></semantics></math> be the weight in the final classification layer for feature map <math id="S6.p1.4.m4.1" class="ltx_Math" alttext="k" display="inline"><semantics id="S6.p1.4.m4.1a"><mi id="S6.p1.4.m4.1.1" xref="S6.p1.4.m4.1.1.cmml">k</mi><annotation-xml encoding="MathML-Content" id="S6.p1.4.m4.1b"><ci id="S6.p1.4.m4.1.1.cmml" xref="S6.p1.4.m4.1.1">𝑘</ci></annotation-xml><annotation encoding="application/x-tex" id="S6.p1.4.m4.1c">k</annotation></semantics></math> leading to pathology <math id="S6.p1.5.m5.1" class="ltx_Math" alttext="c" display="inline"><semantics id="S6.p1.5.m5.1a"><mi id="S6.p1.5.m5.1.1" xref="S6.p1.5.m5.1.1.cmml">c</mi><annotation-xml encoding="MathML-Content" id="S6.p1.5.m5.1b"><ci id="S6.p1.5.m5.1.1.cmml" xref="S6.p1.5.m5.1.1">𝑐</ci></annotation-xml><annotation encoding="application/x-tex" id="S6.p1.5.m5.1c">c</annotation></semantics></math>. We obtain a map <math id="S6.p1.6.m6.1" class="ltx_Math" alttext="M_{c}" display="inline"><semantics id="S6.p1.6.m6.1a"><msub id="S6.p1.6.m6.1.1" xref="S6.p1.6.m6.1.1.cmml"><mi id="S6.p1.6.m6.1.1.2" xref="S6.p1.6.m6.1.1.2.cmml">M</mi><mi id="S6.p1.6.m6.1.1.3" xref="S6.p1.6.m6.1.1.3.cmml">c</mi></msub><annotation-xml encoding="MathML-Content" id="S6.p1.6.m6.1b"><apply id="S6.p1.6.m6.1.1.cmml" xref="S6.p1.6.m6.1.1"><csymbol cd="ambiguous" id="S6.p1.6.m6.1.1.1.cmml" xref="S6.p1.6.m6.1.1">subscript</csymbol><ci id="S6.p1.6.m6.1.1.2.cmml" xref="S6.p1.6.m6.1.1.2">𝑀</ci><ci id="S6.p1.6.m6.1.1.3.cmml" xref="S6.p1.6.m6.1.1.3">𝑐</ci></apply></annotation-xml><annotation encoding="application/x-tex" id="S6.p1.6.m6.1c">M_{c}</annotation></semantics></math> of the most salient features used in classifying the image as having pathology <math id="S6.p1.7.m7.1" class="ltx_Math" alttext="c" display="inline"><semantics id="S6.p1.7.m7.1a"><mi id="S6.p1.7.m7.1.1" xref="S6.p1.7.m7.1.1.cmml">c</mi><annotation-xml encoding="MathML-Content" id="S6.p1.7.m7.1b"><ci id="S6.p1.7.m7.1.1.cmml" xref="S6.p1.7.m7.1.1">𝑐</ci></annotation-xml><annotation encoding="application/x-tex" id="S6.p1.7.m7.1c">c</annotation></semantics></math> by taking the weighted sum of the feature maps using their associated weights. Formally,</p>
+<table id="S6.Ex5" class="ltx_equation ltx_eqn_table">
+
+<tbody><tr class="ltx_equation ltx_eqn_row ltx_align_baseline">
+<td class="ltx_eqn_cell ltx_eqn_center_padleft"></td>
+<td class="ltx_eqn_cell ltx_align_center"><math id="S6.Ex5.m1.3" class="ltx_Math" alttext="M_{c}=\sum_{k}w_{c,k}f_{k}." display="block"><semantics id="S6.Ex5.m1.3a"><mrow id="S6.Ex5.m1.3.3.1" xref="S6.Ex5.m1.3.3.1.1.cmml"><mrow id="S6.Ex5.m1.3.3.1.1" xref="S6.Ex5.m1.3.3.1.1.cmml"><msub id="S6.Ex5.m1.3.3.1.1.2" xref="S6.Ex5.m1.3.3.1.1.2.cmml"><mi id="S6.Ex5.m1.3.3.1.1.2.2" xref="S6.Ex5.m1.3.3.1.1.2.2.cmml">M</mi><mi id="S6.Ex5.m1.3.3.1.1.2.3" xref="S6.Ex5.m1.3.3.1.1.2.3.cmml">c</mi></msub><mo rspace="0.111em" id="S6.Ex5.m1.3.3.1.1.1" xref="S6.Ex5.m1.3.3.1.1.1.cmml">=</mo><mrow id="S6.Ex5.m1.3.3.1.1.3" xref="S6.Ex5.m1.3.3.1.1.3.cmml"><munder id="S6.Ex5.m1.3.3.1.1.3.1" xref="S6.Ex5.m1.3.3.1.1.3.1.cmml"><mo movablelimits="false" id="S6.Ex5.m1.3.3.1.1.3.1.2" xref="S6.Ex5.m1.3.3.1.1.3.1.2.cmml">∑</mo><mi id="S6.Ex5.m1.3.3.1.1.3.1.3" xref="S6.Ex5.m1.3.3.1.1.3.1.3.cmml">k</mi></munder><mrow id="S6.Ex5.m1.3.3.1.1.3.2" xref="S6.Ex5.m1.3.3.1.1.3.2.cmml"><msub id="S6.Ex5.m1.3.3.1.1.3.2.2" xref="S6.Ex5.m1.3.3.1.1.3.2.2.cmml"><mi id="S6.Ex5.m1.3.3.1.1.3.2.2.2" xref="S6.Ex5.m1.3.3.1.1.3.2.2.2.cmml">w</mi><mrow id="S6.Ex5.m1.2.2.2.4" xref="S6.Ex5.m1.2.2.2.3.cmml"><mi id="S6.Ex5.m1.1.1.1.1" xref="S6.Ex5.m1.1.1.1.1.cmml">c</mi><mo id="S6.Ex5.m1.2.2.2.4.1" xref="S6.Ex5.m1.2.2.2.3.cmml">,</mo><mi id="S6.Ex5.m1.2.2.2.2" xref="S6.Ex5.m1.2.2.2.2.cmml">k</mi></mrow></msub><mo lspace="0em" rspace="0em" id="S6.Ex5.m1.3.3.1.1.3.2.1" xref="S6.Ex5.m1.3.3.1.1.3.2.1.cmml">​</mo><msub id="S6.Ex5.m1.3.3.1.1.3.2.3" xref="S6.Ex5.m1.3.3.1.1.3.2.3.cmml"><mi id="S6.Ex5.m1.3.3.1.1.3.2.3.2" xref="S6.Ex5.m1.3.3.1.1.3.2.3.2.cmml">f</mi><mi id="S6.Ex5.m1.3.3.1.1.3.2.3.3" xref="S6.Ex5.m1.3.3.1.1.3.2.3.3.cmml">k</mi></msub></mrow></mrow></mrow><mo lspace="0em" id="S6.Ex5.m1.3.3.1.2" xref="S6.Ex5.m1.3.3.1.1.cmml">.</mo></mrow><annotation-xml encoding="MathML-Content" id="S6.Ex5.m1.3b"><apply id="S6.Ex5.m1.3.3.1.1.cmml" xref="S6.Ex5.m1.3.3.1"><eq id="S6.Ex5.m1.3.3.1.1.1.cmml" xref="S6.Ex5.m1.3.3.1.1.1"></eq><apply id="S6.Ex5.m1.3.3.1.1.2.cmml" xref="S6.Ex5.m1.3.3.1.1.2"><csymbol cd="ambiguous" id="S6.Ex5.m1.3.3.1.1.2.1.cmml" xref="S6.Ex5.m1.3.3.1.1.2">subscript</csymbol><ci id="S6.Ex5.m1.3.3.1.1.2.2.cmml" xref="S6.Ex5.m1.3.3.1.1.2.2">𝑀</ci><ci id="S6.Ex5.m1.3.3.1.1.2.3.cmml" xref="S6.Ex5.m1.3.3.1.1.2.3">𝑐</ci></apply><apply id="S6.Ex5.m1.3.3.1.1.3.cmml" xref="S6.Ex5.m1.3.3.1.1.3"><apply id="S6.Ex5.m1.3.3.1.1.3.1.cmml" xref="S6.Ex5.m1.3.3.1.1.3.1"><csymbol cd="ambiguous" id="S6.Ex5.m1.3.3.1.1.3.1.1.cmml" xref="S6.Ex5.m1.3.3.1.1.3.1">subscript</csymbol><sum id="S6.Ex5.m1.3.3.1.1.3.1.2.cmml" xref="S6.Ex5.m1.3.3.1.1.3.1.2"></sum><ci id="S6.Ex5.m1.3.3.1.1.3.1.3.cmml" xref="S6.Ex5.m1.3.3.1.1.3.1.3">𝑘</ci></apply><apply id="S6.Ex5.m1.3.3.1.1.3.2.cmml" xref="S6.Ex5.m1.3.3.1.1.3.2"><times id="S6.Ex5.m1.3.3.1.1.3.2.1.cmml" xref="S6.Ex5.m1.3.3.1.1.3.2.1"></times><apply id="S6.Ex5.m1.3.3.1.1.3.2.2.cmml" xref="S6.Ex5.m1.3.3.1.1.3.2.2"><csymbol cd="ambiguous" id="S6.Ex5.m1.3.3.1.1.3.2.2.1.cmml" xref="S6.Ex5.m1.3.3.1.1.3.2.2">subscript</csymbol><ci id="S6.Ex5.m1.3.3.1.1.3.2.2.2.cmml" xref="S6.Ex5.m1.3.3.1.1.3.2.2.2">𝑤</ci><list id="S6.Ex5.m1.2.2.2.3.cmml" xref="S6.Ex5.m1.2.2.2.4"><ci id="S6.Ex5.m1.1.1.1.1.cmml" xref="S6.Ex5.m1.1.1.1.1">𝑐</ci><ci id="S6.Ex5.m1.2.2.2.2.cmml" xref="S6.Ex5.m1.2.2.2.2">𝑘</ci></list></apply><apply id="S6.Ex5.m1.3.3.1.1.3.2.3.cmml" xref="S6.Ex5.m1.3.3.1.1.3.2.3"><csymbol cd="ambiguous" id="S6.Ex5.m1.3.3.1.1.3.2.3.1.cmml" xref="S6.Ex5.m1.3.3.1.1.3.2.3">subscript</csymbol><ci id="S6.Ex5.m1.3.3.1.1.3.2.3.2.cmml" xref="S6.Ex5.m1.3.3.1.1.3.2.3.2">𝑓</ci><ci id="S6.Ex5.m1.3.3.1.1.3.2.3.3.cmml" xref="S6.Ex5.m1.3.3.1.1.3.2.3.3">𝑘</ci></apply></apply></apply></apply></annotation-xml><annotation encoding="application/x-tex" id="S6.Ex5.m1.3c">M_{c}=\sum_{k}w_{c,k}f_{k}.</annotation></semantics></math></td>
+<td class="ltx_eqn_cell ltx_eqn_center_padright"></td>
+</tr></tbody>
+</table>
+</div>
+<div id="S6.p2" class="ltx_para">
+<p id="S6.p2.2" class="ltx_p">We identify the most important features used by the model in its prediction of the pathology <math id="S6.p2.1.m1.1" class="ltx_Math" alttext="c" display="inline"><semantics id="S6.p2.1.m1.1a"><mi id="S6.p2.1.m1.1.1" xref="S6.p2.1.m1.1.1.cmml">c</mi><annotation-xml encoding="MathML-Content" id="S6.p2.1.m1.1b"><ci id="S6.p2.1.m1.1.1.cmml" xref="S6.p2.1.m1.1.1">𝑐</ci></annotation-xml><annotation encoding="application/x-tex" id="S6.p2.1.m1.1c">c</annotation></semantics></math> by upscaling the map <math id="S6.p2.2.m2.1" class="ltx_Math" alttext="M_{c}" display="inline"><semantics id="S6.p2.2.m2.1a"><msub id="S6.p2.2.m2.1.1" xref="S6.p2.2.m2.1.1.cmml"><mi id="S6.p2.2.m2.1.1.2" xref="S6.p2.2.m2.1.1.2.cmml">M</mi><mi id="S6.p2.2.m2.1.1.3" xref="S6.p2.2.m2.1.1.3.cmml">c</mi></msub><annotation-xml encoding="MathML-Content" id="S6.p2.2.m2.1b"><apply id="S6.p2.2.m2.1.1.cmml" xref="S6.p2.2.m2.1.1"><csymbol cd="ambiguous" id="S6.p2.2.m2.1.1.1.cmml" xref="S6.p2.2.m2.1.1">subscript</csymbol><ci id="S6.p2.2.m2.1.1.2.cmml" xref="S6.p2.2.m2.1.1.2">𝑀</ci><ci id="S6.p2.2.m2.1.1.3.cmml" xref="S6.p2.2.m2.1.1.3">𝑐</ci></apply></annotation-xml><annotation encoding="application/x-tex" id="S6.p2.2.m2.1c">M_{c}</annotation></semantics></math> to the dimensions of the image and overlaying the image.</p>
+</div>
+<div id="S6.p3" class="ltx_para">
+<p id="S6.p3.1" class="ltx_p">Figure&nbsp;<a href="https://ar5iv.labs.arxiv.org/html/1711.05225#S3.F2" title="Figure 2 ‣ 3.2 Test ‣ 3 Data ‣ Chest" class="ltx_ref"><span class="ltx_text ltx_ref_tag">2</span></a> shows several examples of CAMs on the pneumonia detection task as well as the 14-class pathology classification task.</p>
+</div>
+</section>
+<section id="S7" class="ltx_section">
+<h2 class="ltx_title ltx_title_section">
+<span class="ltx_tag ltx_tag_section">7 </span>Related Work</h2>
+
+<div id="S7.p1" class="ltx_para">
+<p id="S7.p1.1" class="ltx_p">Recent advancements in deep learning and large datasets have enabled algorithms to surpass the performance of medical professionals in a wide variety of medical imaging tasks, including diabetic retinopathy detection <cite class="ltx_cite ltx_citemacro_citep">(Gulshan et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib12" title="" class="ltx_ref">2016</a>)</cite>, skin cancer classification <cite class="ltx_cite ltx_citemacro_citep">(Esteva et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib8" title="" class="ltx_ref">2017</a>)</cite>, arrhythmia detection <cite class="ltx_cite ltx_citemacro_citep">(Rajpurkar et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib24" title="" class="ltx_ref">2017</a>)</cite>, and hemorrhage identification <cite class="ltx_cite ltx_citemacro_citep">(Grewal et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib11" title="" class="ltx_ref">2017</a>)</cite>.</p>
+</div>
+<div id="S7.p2" class="ltx_para">
+<p id="S7.p2.1" class="ltx_p">Automated diagnosis from chest radiographs has received increasing attention with algorithms for pulmonary tuberculosis classification <cite class="ltx_cite ltx_citemacro_citep">(Lakhani &amp; Sundaram, <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib20" title="" class="ltx_ref">2017</a>)</cite> and lung nodule detection <cite class="ltx_cite ltx_citemacro_citep">(Huang et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib15" title="" class="ltx_ref">2017</a>)</cite>. <cite class="ltx_cite ltx_citemacro_citet">Islam et&nbsp;al. (<a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib17" title="" class="ltx_ref">2017</a>)</cite> studied the performance of various convolutional architectures on different abnormalities using the publicly available OpenI dataset <cite class="ltx_cite ltx_citemacro_citep">(Demner-Fushman et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib6" title="" class="ltx_ref">2015</a>)</cite>. <cite class="ltx_cite ltx_citemacro_citet">Wang et&nbsp;al. (<a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib26" title="" class="ltx_ref">2017</a>)</cite> released ChestX-ray-14, an order of magnitude larger than previous datasets of its kind, and also benchmarked different convolutional neural network architectures pre-trained on ImageNet. Recently <cite class="ltx_cite ltx_citemacro_citet">Yao et&nbsp;al. (<a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib28" title="" class="ltx_ref">2017</a>)</cite> exploited statistical dependencies between labels in order make more accurate predictions, outperforming <cite class="ltx_cite ltx_citemacro_citet">Wang et&nbsp;al. (<a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib26" title="" class="ltx_ref">2017</a>)</cite> on 13 of 14 classes.</p>
+</div>
+</section>
+<section id="S8" class="ltx_section">
+<h2 class="ltx_title ltx_title_section">
+<span class="ltx_tag ltx_tag_section">8 </span>Conclusion</h2>
+
+<div id="S8.p1" class="ltx_para">
+<p id="S8.p1.1" class="ltx_p">Pneumonia accounts for a significant proportion of patient morbidity and mortality <cite class="ltx_cite ltx_citemacro_citep">(Gonçalves-Pereira et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib10" title="" class="ltx_ref">2013</a>)</cite>. Early diagnosis and treatment of pneumonia is critical to preventing complications including death <cite class="ltx_cite ltx_citemacro_citep">(Aydogdu et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib1" title="" class="ltx_ref">2010</a>)</cite>. With approximately 2 billion procedures per year, chest X-rays are the most common imaging examination tool used in practice, critical for screening, diagnosis, and management of a variety of diseases including pneumonia <cite class="ltx_cite ltx_citemacro_citep">(Raoof et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib25" title="" class="ltx_ref">2012</a>)</cite>. However, two thirds of the global population lacks access to radiology diagnostics, according to an estimate by the World Health Organization <cite class="ltx_cite ltx_citemacro_citep">(Mollura et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib21" title="" class="ltx_ref">2010</a>)</cite>. There is a shortage of experts who can interpret X-rays, even when imaging equipment is available, leading to increased mortality from treatable diseases <cite class="ltx_cite ltx_citemacro_citep">(Kesselman et&nbsp;al., <a href="https://ar5iv.labs.arxiv.org/html/1711.05225#bib.bib18" title="" class="ltx_ref">2016</a>)</cite>.</p>
+</div>
+<div id="S8.p2" class="ltx_para">
+<p id="S8.p2.1" class="ltx_p">We develop an algorithm which detects pneumonia from frontal-view chest X-ray images at a level exceeding practicing radiologists. We also show that a simple extension of our algorithm to detect multiple diseases outperforms previous state of the art on ChestX-ray14, the largest publicly available chest X-ray dataset. With automation at the level of experts, we hope that this technology can improve healthcare delivery and increase access to medical imaging expertise in parts of the world where access to skilled radiologists is limited.</p>
+</div>
+<div class="ltx_pagination ltx_role_newpage"></div>
+</section>
+<section id="S9" class="ltx_section">
+<h2 class="ltx_title ltx_title_section">
+<span class="ltx_tag ltx_tag_section">9 </span>Acknowledgements</h2>
+
+<div id="S9.p1" class="ltx_para">
+<p id="S9.p1.1" class="ltx_p">We would like to acknowledge the Stanford Center for Artificial Intelligence in Medicine and Imaging for clinical dataset infrastructure support (<a href="https://ar5iv.labs.arxiv.org/html/AIMI.stanford.edu" title="" class="ltx_ref ltx_url ltx_font_typewriter">AIMI.stanford.edu</a>).</p>
+</div>
+</section>
+<section id="bib" class="ltx_bibliography">
+<h2 class="ltx_title ltx_title_bibliography">References</h2>
+
+<ul class="ltx_biblist">
+<li id="bib.bib1" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Aydogdu et&nbsp;al. (2010)</span>
+<span class="ltx_bibblock">
+Aydogdu, M, Ozyilmaz, E, Aksoy, Handan, Gursel, G, and Ekim, Numan.
+
+</span>
+<span class="ltx_bibblock">Mortality prediction in community-acquired pneumonia requiring
+mechanical ventilation; values of pneumonia and intensive care unit severity
+scores.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib1.1.1" class="ltx_emph ltx_font_italic">Tuberk Toraks</em>, 58(1):25–34, 2010.
+
+</span>
+</li>
+<li id="bib.bib2" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Berbaum et&nbsp;al. (1985)</span>
+<span class="ltx_bibblock">
+Berbaum, K, Franken&nbsp;Jr, EA, and Smith, WL.
+
+</span>
+<span class="ltx_bibblock">The effect of comparison films upon resident interpretation of
+pediatric chest radiographs.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib2.1.1" class="ltx_emph ltx_font_italic">Investigative radiology</em>, 20(2):124–128,
+1985.
+
+</span>
+</li>
+<li id="bib.bib3" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">CDC (2017)</span>
+<span class="ltx_bibblock">
+CDC, 2017.
+
+</span>
+<span class="ltx_bibblock">URL <a target="_blank" href="https://www.cdc.gov/features/pneumonia/index.html" title="" class="ltx_ref ltx_url ltx_font_typewriter">https://www.cdc.gov/features/pneumonia/index.html</a>.
+
+</span>
+</li>
+<li id="bib.bib4" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Cherian et&nbsp;al. (2005)</span>
+<span class="ltx_bibblock">
+Cherian, Thomas, Mulholland, E&nbsp;Kim, Carlin, John&nbsp;B, Ostensen, Harald, Amin,
+Ruhul, Campo, Margaret&nbsp;de, Greenberg, David, Lagos, Rosanna, Lucero, Marilla,
+Madhi, Shabir&nbsp;A, et&nbsp;al.
+
+</span>
+<span class="ltx_bibblock">Standardized interpretation of paediatric chest radiographs for the
+diagnosis of pneumonia in epidemiological studies.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib4.1.1" class="ltx_emph ltx_font_italic">Bulletin of the World Health Organization</em>, 83(5):353–359, 2005.
+
+</span>
+</li>
+<li id="bib.bib5" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Davies et&nbsp;al. (1996)</span>
+<span class="ltx_bibblock">
+Davies, H&nbsp;Dele, Wang, Elaine E-l, Manson, David, Babyn, Paul, and Shuckett,
+Bruce.
+
+</span>
+<span class="ltx_bibblock">Reliability of the chest radiograph in the diagnosis of lower
+respiratory infections in young children.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib5.1.1" class="ltx_emph ltx_font_italic">The Pediatric infectious disease journal</em>, 15(7):600–604, 1996.
+
+</span>
+</li>
+<li id="bib.bib6" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Demner-Fushman et&nbsp;al. (2015)</span>
+<span class="ltx_bibblock">
+Demner-Fushman, Dina, Kohli, Marc&nbsp;D, Rosenman, Marc&nbsp;B, Shooshan, Sonya&nbsp;E,
+Rodriguez, Laritza, Antani, Sameer, Thoma, George&nbsp;R, and McDonald, Clement&nbsp;J.
+
+</span>
+<span class="ltx_bibblock">Preparing a collection of radiology examinations for distribution and
+retrieval.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib6.1.1" class="ltx_emph ltx_font_italic">Journal of the American Medical Informatics Association</em>,
+23(2):304–310, 2015.
+
+</span>
+</li>
+<li id="bib.bib7" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Deng et&nbsp;al. (2009)</span>
+<span class="ltx_bibblock">
+Deng, Jia, Dong, Wei, Socher, Richard, Li, Li-Jia, Li, Kai, and Fei-Fei, Li.
+
+</span>
+<span class="ltx_bibblock">Imagenet: A large-scale hierarchical image database.
+
+</span>
+<span class="ltx_bibblock">In <em id="bib.bib7.1.1" class="ltx_emph ltx_font_italic">Computer Vision and Pattern Recognition, 2009. CVPR 2009.
+IEEE Conference on</em>, pp.&nbsp; 248–255. IEEE, 2009.
+
+</span>
+</li>
+<li id="bib.bib8" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Esteva et&nbsp;al. (2017)</span>
+<span class="ltx_bibblock">
+Esteva, Andre, Kuprel, Brett, Novoa, Roberto&nbsp;A, Ko, Justin, Swetter, Susan&nbsp;M,
+Blau, Helen&nbsp;M, and Thrun, Sebastian.
+
+</span>
+<span class="ltx_bibblock">Dermatologist-level classification of skin cancer with deep neural
+networks.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib8.1.1" class="ltx_emph ltx_font_italic">Nature</em>, 542(7639):115–118, 2017.
+
+</span>
+</li>
+<li id="bib.bib9" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Franquet (2001)</span>
+<span class="ltx_bibblock">
+Franquet, T.
+
+</span>
+<span class="ltx_bibblock">Imaging of pneumonia: trends and algorithms.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib9.1.1" class="ltx_emph ltx_font_italic">European Respiratory Journal</em>, 18(1):196–208, 2001.
+
+</span>
+</li>
+<li id="bib.bib10" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Gonçalves-Pereira et&nbsp;al. (2013)</span>
+<span class="ltx_bibblock">
+Gonçalves-Pereira, João, Conceição, Catarina, and
+Póvoa, Pedro.
+
+</span>
+<span class="ltx_bibblock">Community-acquired pneumonia: identification and evaluation of
+nonresponders.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib10.1.1" class="ltx_emph ltx_font_italic">Therapeutic advances in infectious disease</em>, 1(1):5–17, 2013.
+
+</span>
+</li>
+<li id="bib.bib11" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Grewal et&nbsp;al. (2017)</span>
+<span class="ltx_bibblock">
+Grewal, Monika, Srivastava, Muktabh&nbsp;Mayank, Kumar, Pulkit, and Varadarajan,
+Srikrishna.
+
+</span>
+<span class="ltx_bibblock">Radnet: Radiologist level accuracy using deep learning for hemorrhage
+detection in ct scans.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib11.1.1" class="ltx_emph ltx_font_italic">arXiv preprint arXiv:1710.04934</em>, 2017.
+
+</span>
+</li>
+<li id="bib.bib12" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Gulshan et&nbsp;al. (2016)</span>
+<span class="ltx_bibblock">
+Gulshan, Varun, Peng, Lily, Coram, Marc, Stumpe, Martin&nbsp;C, Wu, Derek,
+Narayanaswamy, Arunachalam, Venugopalan, Subhashini, Widner, Kasumi, Madams,
+Tom, Cuadros, Jorge, et&nbsp;al.
+
+</span>
+<span class="ltx_bibblock">Development and validation of a deep learning algorithm for detection
+of diabetic retinopathy in retinal fundus photographs.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib12.1.1" class="ltx_emph ltx_font_italic">Jama</em>, 316(22):2402–2410, 2016.
+
+</span>
+</li>
+<li id="bib.bib13" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Hopstaken et&nbsp;al. (2004)</span>
+<span class="ltx_bibblock">
+Hopstaken, RM, Witbraad, T, Van&nbsp;Engelshoven, JMA, and Dinant, GJ.
+
+</span>
+<span class="ltx_bibblock">Inter-observer variation in the interpretation of chest radiographs
+for pneumonia in community-acquired lower respiratory tract infections.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib13.1.1" class="ltx_emph ltx_font_italic">Clinical radiology</em>, 59(8):743–752, 2004.
+
+</span>
+</li>
+<li id="bib.bib14" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Huang et&nbsp;al. (2016)</span>
+<span class="ltx_bibblock">
+Huang, Gao, Liu, Zhuang, Weinberger, Kilian&nbsp;Q, and van&nbsp;der Maaten, Laurens.
+
+</span>
+<span class="ltx_bibblock">Densely connected convolutional networks.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib14.1.1" class="ltx_emph ltx_font_italic">arXiv preprint arXiv:1608.06993</em>, 2016.
+
+</span>
+</li>
+<li id="bib.bib15" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Huang et&nbsp;al. (2017)</span>
+<span class="ltx_bibblock">
+Huang, Peng, Park, Seyoun, Yan, Rongkai, Lee, Junghoon, Chu, Linda&nbsp;C, Lin,
+Cheng&nbsp;T, Hussien, Amira, Rathmell, Joshua, Thomas, Brett, Chen, Chen, et&nbsp;al.
+
+</span>
+<span class="ltx_bibblock">Added value of computer-aided ct image features for early lung cancer
+diagnosis with small pulmonary nodules: A matched case-control study.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib15.1.1" class="ltx_emph ltx_font_italic">Radiology</em>, pp.&nbsp; 162725, 2017.
+
+</span>
+</li>
+<li id="bib.bib16" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Ioffe &amp; Szegedy (2015)</span>
+<span class="ltx_bibblock">
+Ioffe, Sergey and Szegedy, Christian.
+
+</span>
+<span class="ltx_bibblock">Batch normalization: Accelerating deep network training by reducing
+internal covariate shift.
+
+</span>
+<span class="ltx_bibblock">In <em id="bib.bib16.1.1" class="ltx_emph ltx_font_italic">International Conference on Machine Learning</em>, pp.&nbsp;448–456, 2015.
+
+</span>
+</li>
+<li id="bib.bib17" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Islam et&nbsp;al. (2017)</span>
+<span class="ltx_bibblock">
+Islam, Mohammad&nbsp;Tariqul, Aowal, Md&nbsp;Abdul, Minhaz, Ahmed&nbsp;Tahseen, and Ashraf,
+Khalid.
+
+</span>
+<span class="ltx_bibblock">Abnormality detection and localization in chest x-rays using deep
+convolutional neural networks.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib17.1.1" class="ltx_emph ltx_font_italic">arXiv preprint arXiv:1705.09850</em>, 2017.
+
+</span>
+</li>
+<li id="bib.bib18" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Kesselman et&nbsp;al. (2016)</span>
+<span class="ltx_bibblock">
+Kesselman, Andrew, Soroosh, Garshasb, Mollura, Daniel&nbsp;J, and Group, RAD-AID
+Conference&nbsp;Writing.
+
+</span>
+<span class="ltx_bibblock">2015 rad-aid conference on international radiology for developing
+countries: The evolving global radiology landscape.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib18.1.1" class="ltx_emph ltx_font_italic">Journal of the American College of Radiology</em>, 13(9):1139–1144, 2016.
+
+</span>
+</li>
+<li id="bib.bib19" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Kingma &amp; Ba (2014)</span>
+<span class="ltx_bibblock">
+Kingma, Diederik and Ba, Jimmy.
+
+</span>
+<span class="ltx_bibblock">Adam: A method for stochastic optimization.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib19.1.1" class="ltx_emph ltx_font_italic">arXiv preprint arXiv:1412.6980</em>, 2014.
+
+</span>
+</li>
+<li id="bib.bib20" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Lakhani &amp; Sundaram (2017)</span>
+<span class="ltx_bibblock">
+Lakhani, Paras and Sundaram, Baskaran.
+
+</span>
+<span class="ltx_bibblock">Deep learning at chest radiography: Automated classification of
+pulmonary tuberculosis by using convolutional neural networks.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib20.1.1" class="ltx_emph ltx_font_italic">Radiology</em>, pp.&nbsp; 162326, 2017.
+
+</span>
+</li>
+<li id="bib.bib21" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Mollura et&nbsp;al. (2010)</span>
+<span class="ltx_bibblock">
+Mollura, Daniel&nbsp;J, Azene, Ezana&nbsp;M, Starikovsky, Anna, Thelwell, Aduke,
+Iosifescu, Sarah, Kimble, Cary, Polin, Ann, Garra, Brian&nbsp;S, DeStigter,
+Kristen&nbsp;K, Short, Brad, et&nbsp;al.
+
+</span>
+<span class="ltx_bibblock">White paper report of the rad-aid conference on international
+radiology for developing countries: identifying challenges, opportunities,
+and strategies for imaging services in the developing world.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib21.1.1" class="ltx_emph ltx_font_italic">Journal of the American College of Radiology</em>, 7(7):495–500, 2010.
+
+</span>
+</li>
+<li id="bib.bib22" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Neuman et&nbsp;al. (2012)</span>
+<span class="ltx_bibblock">
+Neuman, Mark&nbsp;I, Lee, Edward&nbsp;Y, Bixby, Sarah, Diperna, Stephanie, Hellinger,
+Jeffrey, Markowitz, Richard, Servaes, Sabah, Monuteaux, Michael&nbsp;C, and Shah,
+Samir&nbsp;S.
+
+</span>
+<span class="ltx_bibblock">Variability in the interpretation of chest radiographs for the
+diagnosis of pneumonia in children.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib22.1.1" class="ltx_emph ltx_font_italic">Journal of hospital medicine</em>, 7(4):294–298, 2012.
+
+</span>
+</li>
+<li id="bib.bib23" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Potchen et&nbsp;al. (1979)</span>
+<span class="ltx_bibblock">
+Potchen, EJ, Gard, JW, Lazar, P, Lahaie, P, and Andary, M.
+
+</span>
+<span class="ltx_bibblock">Effect of clinical history data on chest film
+interpretation-direction or distraction.
+
+</span>
+<span class="ltx_bibblock">In <em id="bib.bib23.1.1" class="ltx_emph ltx_font_italic">Investigative Radiology</em>, volume&nbsp;14, pp.&nbsp; 404–404, 1979.
+
+</span>
+</li>
+<li id="bib.bib24" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Rajpurkar et&nbsp;al. (2017)</span>
+<span class="ltx_bibblock">
+Rajpurkar, Pranav, Hannun, Awni&nbsp;Y, Haghpanahi, Masoumeh, Bourn, Codie, and Ng,
+Andrew&nbsp;Y.
+
+</span>
+<span class="ltx_bibblock">Cardiologist-level arrhythmia detection with convolutional neural
+networks.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib24.1.1" class="ltx_emph ltx_font_italic">arXiv preprint arXiv:1707.01836</em>, 2017.
+
+</span>
+</li>
+<li id="bib.bib25" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Raoof et&nbsp;al. (2012)</span>
+<span class="ltx_bibblock">
+Raoof, Suhail, Feigin, David, Sung, Arthur, Raoof, Sabiha, Irugulpati, Lavanya,
+and Rosenow, Edward&nbsp;C.
+
+</span>
+<span class="ltx_bibblock">Interpretation of plain chest roentgenogram.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib25.1.1" class="ltx_emph ltx_font_italic">CHEST Journal</em>, 141(2):545–558, 2012.
+
+</span>
+</li>
+<li id="bib.bib26" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Wang et&nbsp;al. (2017)</span>
+<span class="ltx_bibblock">
+Wang, Xiaosong, Peng, Yifan, Lu, Le, Lu, Zhiyong, Bagheri, Mohammadhadi, and
+Summers, Ronald&nbsp;M.
+
+</span>
+<span class="ltx_bibblock">Chestx-ray8: Hospital-scale chest x-ray database and benchmarks on
+weakly-supervised classification and localization of common thorax diseases.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib26.1.1" class="ltx_emph ltx_font_italic">arXiv preprint arXiv:1705.02315</em>, 2017.
+
+</span>
+</li>
+<li id="bib.bib27" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">WHO (2001)</span>
+<span class="ltx_bibblock">
+WHO.
+
+</span>
+<span class="ltx_bibblock">Standardization of interpretation of chest radiographs for the
+diagnosis of pneumonia in children.
+
+</span>
+<span class="ltx_bibblock">2001.
+
+</span>
+</li>
+<li id="bib.bib28" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Yao et&nbsp;al. (2017)</span>
+<span class="ltx_bibblock">
+Yao, Li, Poblenz, Eric, Dagunts, Dmitry, Covington, Ben, Bernard, Devon, and
+Lyman, Kevin.
+
+</span>
+<span class="ltx_bibblock">Learning to diagnose from scratch by exploiting dependencies among
+labels.
+
+</span>
+<span class="ltx_bibblock"><em id="bib.bib28.1.1" class="ltx_emph ltx_font_italic">arXiv preprint arXiv:1710.10501</em>, 2017.
+
+</span>
+</li>
+<li id="bib.bib29" class="ltx_bibitem">
+<span class="ltx_tag ltx_role_refnum ltx_tag_bibitem">Zhou et&nbsp;al. (2016)</span>
+<span class="ltx_bibblock">
+Zhou, Bolei, Khosla, Aditya, Lapedriza, Agata, Oliva, Aude, and Torralba,
+Antonio.
+
+</span>
+<span class="ltx_bibblock">Learning deep features for discriminative localization.
+
+</span>
+<span class="ltx_bibblock">In <em id="bib.bib29.1.1" class="ltx_emph ltx_font_italic">Proceedings of the IEEE Conference on Computer Vision and
+Pattern Recognition</em>, pp.&nbsp; 2921–2929, 2016.
+
+</span>
+</li>
+</ul>
+</section>
+</article>
+</div>
+<div class="ar5iv-footer"><a href="https://ar5iv.labs.arxiv.org/html/1711.05224" class="ar5iv-nav-button ar5iv-nav-button-prev">◄</a>
+    <a class="ar5iv-home-button" href="https://ar5iv.labs.arxiv.org/"><img height="40" alt="ar5iv homepage" src="./[1711.05225] Chest_files/ar5iv.png"></a>
+    <a href="https://ar5iv.labs.arxiv.org/feeling_lucky" class="ar5iv-text-button">Feeling<br>lucky?</a>
+    <a href="https://ar5iv.labs.arxiv.org/land_of_honey_and_milk" rel="nofollow" aria-hidden="true" tabindex="-1"></a>
+    <a href="https://ar5iv.labs.arxiv.org/log/1711.05225" class="ar5iv-text-button ar5iv-severity-warning">Conversion<br>report</a>
+    <a class="ar5iv-text-button" target="_blank" href="https://github.com/dginev/ar5iv/issues/new?template=improve-article--arxiv-id-.md&amp;title=Improve+article+1711.05225">Report<br>an issue</a>
+    <a href="https://arxiv.org/abs/1711.05225" class="ar5iv-text-button arxiv-ui-theme">View&nbsp;original<br>on&nbsp;arXiv</a><a href="https://ar5iv.labs.arxiv.org/html/1711.05226" class="ar5iv-nav-button ar5iv-nav-button-next">►</a>
+</div><footer class="ltx_page_footer">
+<a class="ar5iv-toggle-color-scheme" href="javascript:toggleColorScheme()" title="Toggle ar5iv color scheme"><span class="color-scheme-icon"></span></a>
+<a class="ar5iv-footer-button" href="https://arxiv.org/help/license" target="_blank">Copyright</a>
+<a class="ar5iv-footer-button" href="https://arxiv.org/help/policies/privacy_policy" target="_blank">Privacy Policy</a>
+
+<div class="ltx_page_logo">Generated  on Fri Mar 15 05:56:01 2024 by <a target="_blank" href="http://dlmf.nist.gov/LaTeXML/" class="ltx_LaTeXML_logo"><span style="letter-spacing:-0.2em; margin-right:0.1em;">L<span class="ltx_font_smallcaps" style="position:relative; bottom:2.2pt;">a</span>T<span class="ltx_font_smallcaps" style="font-size:120%;position:relative; bottom:-0.2ex;">e</span></span><span style="font-size:90%; position:relative; bottom:-0.2ex;">XML</span><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAOCAYAAAD5YeaVAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9wKExQZLWTEaOUAAAAddEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIFRoZSBHSU1Q72QlbgAAAdpJREFUKM9tkL+L2nAARz9fPZNCKFapUn8kyI0e4iRHSR1Kb8ng0lJw6FYHFwv2LwhOpcWxTjeUunYqOmqd6hEoRDhtDWdA8ApRYsSUCDHNt5ul13vz4w0vWCgUnnEc975arX6ORqN3VqtVZbfbTQC4uEHANM3jSqXymFI6yWazP2KxWAXAL9zCUa1Wy2tXVxheKA9YNoR8Pt+aTqe4FVVVvz05O6MBhqUIBGk8Hn8HAOVy+T+XLJfLS4ZhTiRJgqIoVBRFIoric47jPnmeB1mW/9rr9ZpSSn3Lsmir1fJZlqWlUonKsvwWwD8ymc/nXwVBeLjf7xEKhdBut9Hr9WgmkyGEkJwsy5eHG5vN5g0AKIoCAEgkEkin0wQAfN9/cXPdheu6P33fBwB4ngcAcByHJpPJl+fn54mD3Gg0NrquXxeLRQAAwzAYj8cwTZPwPH9/sVg8PXweDAauqqr2cDjEer1GJBLBZDJBs9mE4zjwfZ85lAGg2+06hmGgXq+j3+/DsixYlgVN03a9Xu8jgCNCyIegIAgx13Vfd7vdu+FweG8YRkjXdWy329+dTgeSJD3ieZ7RNO0VAXAPwDEAO5VKndi2fWrb9jWl9Esul6PZbDY9Go1OZ7PZ9z/lyuD3OozU2wAAAABJRU5ErkJggg==" alt="Mascot Sammy"></a>
+</div></footer>
+</div>
+
+    <script>
+      var canMathML = typeof(MathMLElement) == "function";
+      if (!canMathML) {
+        var body = document.querySelector("body");
+        body.firstElementChild.setAttribute('style', 'opacity: 0;');
+        var loading = document.createElement("div");
+        loading.setAttribute("id", "mathjax-loading-spinner");
+        var message = document.createElement("div");
+        message.setAttribute("id", "mathjax-loading-message");
+        message.innerText = "Typesetting Equations...";
+        body.prepend(loading);
+        body.prepend(message);
+
+        var el = document.createElement("script");
+        el.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
+        document.querySelector("head").appendChild(el);
+
+        window.MathJax = {
+          startup: {
+            pageReady: () => {
+              return MathJax.startup.defaultPageReady().then(() => {
+                body.removeChild(loading);
+                body.removeChild(message);
+                body.firstElementChild.removeAttribute('style');
+              }); } } };
+      }
+    </script>
+    <script>
+    // Auxiliary function, building the preview feature when
+    // an inline citation is clicked
+    function clicked_cite(e) {
+      e.preventDefault();
+      let cite = this.closest('.ltx_cite');
+      let next = cite.nextSibling;
+      if (next && next.nodeType == Node.ELEMENT_NODE && next.getAttribute('class') == "ar5iv-bibitem-preview") {
+        next.remove();
+        return; }
+      // Before adding a preview modal,
+      // cleanup older previews, in case they're still open
+      document.querySelectorAll('span.ar5iv-bibitem-preview').forEach(function(node) {
+        node.remove();
+      })
+
+      // Create the preview
+      preview = document.createElement('span');
+      preview.setAttribute('class','ar5iv-bibitem-preview');
+      let target = document.getElementById(this.getAttribute('href').slice(1));
+      target.childNodes.forEach(function (child) {
+        preview.append(child.cloneNode(true));
+      });
+      let close_x = document.createElement('button');
+      close_x.setAttribute("aria-label","Close modal for bibliography item preview");
+      close_x.textContent = "×";
+      close_x.setAttribute('class', 'ar5iv-button-close-preview');
+      close_x.setAttribute('onclick','this.parentNode.remove()');
+      preview.append(close_x);
+      preview.querySelectorAll('.ltx_tag_bibitem').forEach(function(node) {
+        node.remove();
+      });
+      cite.parentNode.insertBefore(preview, cite.nextSibling);
+      return;
+    }
+    // Global Document initialization:
+    // - assign the preview feature to all inline citation links
+    document.querySelectorAll(".ltx_cite .ltx_ref").forEach(function (link) {
+      link.addEventListener("click", clicked_cite);
+    });
+    </script>
+    
+
+</body></html>
